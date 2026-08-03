@@ -194,6 +194,21 @@ export default function CheckoutPage() {
                   </div>
                 </label>
               </div>
+
+              {/* WELCOME10 First Order Promo */}
+              <div className="flex items-center gap-3 bg-gold/10 border border-gold/30 rounded-2xl px-4 py-3 mt-1">
+                <span className="text-2xl shrink-0">🎁</span>
+                <div className="flex-1">
+                  <p className="text-xs font-bold text-maroon">New Customer? Get 10% OFF!</p>
+                  <p className="text-[11px] text-charcoal/60 mt-0.5">
+                    Apply code{' '}
+                    <span className="font-mono font-bold text-maroon bg-white px-1.5 py-0.5 rounded border border-gold/30 tracking-wider">
+                      WELCOME10
+                    </span>{' '}
+                    in your cart for 10% off — no minimum spend.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
