@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Clock, ShieldCheck, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import { MOCK_PRODUCTS } from '@/services/woocommerce';
-import { ProductCard } from '@/components/product/ProductCard';
+import { RentalProductCard } from '@/components/product/RentalProductCard';
 
 export const RentalSpotlight: React.FC = () => {
   const rentalProducts = MOCK_PRODUCTS.filter((p) => p.isRentalAvailable).slice(0, 4);
@@ -21,11 +21,11 @@ export const RentalSpotlight: React.FC = () => {
             </div>
 
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">
-              Wear Royal Luxury For Your Special Event
+              Wear Anti-Tarnish Luxury For Your Special Event
             </h2>
 
             <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed">
-              Why buy expensive heavy bridal sets for a one-day function? At <strong className="text-gold">CHARMIKA By Lekshmi</strong>, you can rent certified grand Temple Nakshi haarams, Kundan combos & AD chokers starting from just <span className="text-gold font-bold">₹299/day</span>.
+              Why buy expensive heavy bridal sets for a one-day function? At <strong className="text-gold">CHARMIKA By Lekshmi</strong>, you can rent grand Temple Nakshi haarams, Kundan combos & AD chokers starting from just <span className="text-gold font-bold">₹299/day</span>.
             </p>
 
             <ul className="space-y-2.5 text-xs text-white/90 font-medium">
@@ -54,7 +54,7 @@ export const RentalSpotlight: React.FC = () => {
           {/* Rental Showcase Cards */}
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {rentalProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <RentalProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>

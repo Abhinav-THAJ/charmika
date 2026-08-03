@@ -121,11 +121,6 @@ export const SearchOverlay: React.FC<SearchOverlayProps> = ({ isOpen, onClose })
                       <span className="font-semibold text-gold text-sm">
                         ₹{product.price.toLocaleString('en-IN')}
                       </span>
-                      {product.isRentalAvailable && (
-                        <span className="block text-[10px] text-white/70">
-                          Rent from ₹{product.rentalPricePerDay}/day
-                        </span>
-                      )}
                     </div>
                     <ArrowRight className="w-4 h-4 text-gold" />
                   </div>

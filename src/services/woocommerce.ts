@@ -387,6 +387,7 @@ export const MOCK_PRODUCTS: Product[] = [
 ];
 
 export const MOCK_COUPONS: Coupon[] = [
+  { code: 'WELCOME10', discountType: 'percentage', amount: 10, minSpend: 0 },
   { code: 'CHARMIKA10', discountType: 'percentage', amount: 10, minSpend: 2000 },
   { code: 'ROYAL500', discountType: 'fixed', amount: 500, minSpend: 5000 },
   { code: 'BRIDAL15', discountType: 'percentage', amount: 15, minSpend: 15000 },

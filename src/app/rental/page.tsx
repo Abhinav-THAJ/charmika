@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { MOCK_PRODUCTS } from '@/services/woocommerce';
-import { ProductCard } from '@/components/product/ProductCard';
+import { RentalProductCard } from '@/components/product/RentalProductCard';
 import { Clock, ShieldCheck, RefreshCw, Sparkles, HelpCircle, CheckCircle2 } from 'lucide-react';
 
 export default function RentalPage() {
@@ -25,7 +25,7 @@ export default function RentalPage() {
             </h1>
 
             <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed">
-              Why spend lakhs buying heavy bridal haarams for a single day? Rent authentic 22k gold plated & Kundan sets starting from <span className="text-gold font-bold">₹299/day</span>. Guaranteed sanitized, pristine quality delivered to your doorstep in Kerala & India.
+              Why spend lakhs buying heavy bridal haarams for a single day? Rent authentic gold plated & Kundan sets starting from <span className="text-gold font-bold">₹299/day</span>. Guaranteed sanitized, pristine quality delivered to your doorstep in Kerala & India.
             </p>
 
             <div className="flex flex-wrap gap-4 pt-2 text-xs font-medium text-gold">
@@ -76,7 +76,7 @@ export default function RentalPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {rentalProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <RentalProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>

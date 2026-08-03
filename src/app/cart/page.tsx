@@ -202,13 +202,18 @@ export default function CartPage() {
                 Available Promo Codes
               </span>
               <div className="flex flex-wrap gap-2">
-                {['CHARMIKA10', 'ROYAL500', 'BRIDAL15'].map((code) => (
+                {['WELCOME10', 'CHARMIKA10', 'ROYAL500', 'BRIDAL15'].map((code) => (
                   <button
                     key={code}
                     onClick={() => handleQuickApplyCoupon(code)}
-                    className="px-2.5 py-1 bg-gold/10 hover:bg-gold hover:text-maroon border border-gold/30 rounded-lg text-[10px] font-bold text-maroon transition-all flex items-center gap-1"
+                    className={`px-2.5 py-1 border rounded-lg text-[10px] font-bold transition-all flex items-center gap-1 ${
+                      code === 'WELCOME10'
+                        ? 'bg-gold text-maroon border-gold hover:bg-maroon hover:text-white'
+                        : 'bg-gold/10 hover:bg-gold hover:text-maroon border-gold/30 text-maroon'
+                    }`}
                   >
-                    <Sparkles className="w-2.5 h-2.5 text-gold" /> {code}
+                    <Sparkles className="w-2.5 h-2.5" /> {code}
+                    {code === 'WELCOME10' && <span className="ml-0.5 text-[9px] font-normal">★ New</span>}
                   </button>
                 ))}
               </div>

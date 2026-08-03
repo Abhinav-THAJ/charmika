@@ -41,7 +41,7 @@ export default function OffersPage() {
               Exclusive Luxury Discounts
             </h1>
             <p className="text-xs text-white/80 max-w-md font-light">
-              Enjoy extra savings on certified Kundan, Temple Nakshi & AD Stone jewellery with coupon codes below.
+              Enjoy extra savings on Kundan, Temple Nakshi & AD Stone jewellery with coupon codes below.
             </p>
           </div>
 
@@ -63,8 +63,47 @@ export default function OffersPage() {
           </div>
         </div>
 
+        {/* ── First Customer Welcome Banner ─────────────────────── */}
+        <div className="relative mb-10 overflow-hidden rounded-3xl border-2 border-gold shadow-luxury">
+          <div className="absolute inset-0 bg-gradient-to-r from-maroon via-maroon-900 to-maroon-950 pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 px-8 py-7">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-full bg-gold/20 border-2 border-gold flex items-center justify-center text-3xl shrink-0">
+                🎁
+              </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-gold font-bold block mb-1">
+                  ✨ First Order Exclusive
+                </span>
+                <h2 className="font-serif text-2xl font-bold text-white">
+                  Welcome Gift — 10% OFF
+                </h2>
+                <p className="text-white/70 text-sm mt-1 max-w-md">
+                  New to Charmika? Use code <strong className="text-gold">WELCOME10</strong> on your very first order and enjoy 10% off — no minimum spend required!
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-3 shrink-0">
+              <div className="px-6 py-3 rounded-xl border-2 border-dashed border-gold bg-white/5 text-center">
+                <span className="text-[11px] text-white/60 uppercase tracking-wider block mb-0.5">Your Coupon Code</span>
+                <span className="font-mono font-bold text-2xl text-gold tracking-widest">WELCOME10</span>
+              </div>
+              <button
+                onClick={() => copyCoupon('WELCOME10')}
+                className="flex items-center gap-2 px-5 py-2.5 bg-gold text-maroon font-bold text-sm rounded-full hover:bg-white transition-colors"
+              >
+                {copiedCode === 'WELCOME10' ? (
+                  <><Check className="w-4 h-4" /> Copied!</>
+                ) : (
+                  <><Copy className="w-4 h-4" /> Copy Code</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Coupons Grid */}
-        <h2 className="font-serif text-2xl font-bold text-maroon mb-6">Available Promo Coupons</h2>
+        <h2 className="font-serif text-2xl font-bold text-maroon mb-6">All Promo Coupons</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {MOCK_COUPONS.map((c) => (
             <div

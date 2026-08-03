@@ -1,13 +1,33 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Search, Heart, ShoppingBag, Menu, X, ChevronDown, Sparkles, Gem, Clock } from 'lucide-react';
+import {
+  Search, Heart, ShoppingBag, Menu, X, ChevronDown, Sparkles, Gem, Clock,
+  Star, Gift, Tag, Phone, MapPin, Zap, Crown, Shield, RefreshCw, Video,
+} from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
 import { SearchOverlay } from '@/components/common/SearchOverlay';
+
+/* ─── Mega Menu Data ──────────────────────────────────────────────── */
+const categoryMenu = [
+  { name: 'Necklaces', href: '/shop?category=necklaces', icon: '📿' },
+  { name: 'Long Haarams', href: '/shop?category=long-haarams', icon: '✨' },
+  { name: 'Chokers', href: '/shop?category=chokers', icon: '💛' },
+  { name: 'Temple Jewellery', href: '/shop?category=temple-jewellery', icon: '🛕' },
+  { name: 'AD Stone', href: '/shop?category=ad-stone-jewellery', icon: '💎' },
+  { name: 'Anti Tarnish', href: '/shop?category=anti-tarnish-jewellery', icon: '🌟' },
+  { name: 'Bangles & Bracelets', href: '/shop?category=bangles-bracelets', icon: '💫' },
+  { name: 'Earrings', href: '/shop?category=earrings', icon: '🌸' },
+  { name: 'Finger Rings', href: '/shop?category=finger-rings', icon: '💍' },
+  { name: 'Hip Belts', href: '/shop?category=hip-belts-oddiyanam', icon: '🎀' },
+];
+
+const megaMenus: Record<string, React.ReactNode> = {};
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -18,40 +38,41 @@ export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const categoryMenu = [
-    { name: 'Necklaces', href: '/shop?category=necklaces' },
-    { name: 'Long Haarams', href: '/shop?category=long-haarams' },
-    { name: 'Chokers', href: '/shop?category=chokers' },
-    { name: 'Temple Jewellery', href: '/shop?category=temple-jewellery' },
-    { name: 'AD Stone', href: '/shop?category=ad-stone-jewellery' },
-    { name: 'Anti Tarnish', href: '/shop?category=anti-tarnish-jewellery' },
-    { name: 'Bangles & Bracelets', href: '/shop?category=bangles-bracelets' },
-    { name: 'Earrings', href: '/shop?category=earrings' },
-    { name: 'Finger Rings', href: '/shop?category=finger-rings' },
-    { name: 'Hip Belts', href: '/shop?category=hip-belts-oddiyanam' },
-  ];
+  const openMenu = (name: string) => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+    setActiveMenu(name);
+  };
+  const closeMenu = () => {
+    leaveTimer.current = setTimeout(() => setActiveMenu(null), 120);
+  };
+  const stayOpen = () => {
+    if (leaveTimer.current) clearTimeout(leaveTimer.current);
+  };
+
+  const isActive = (href: string) => pathname === href;
+
+  const navLinkClass = (href: string, extra = '') =>
+    `relative flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium transition-colors duration-200 py-1 ${extra} ${
+      isActive(href) ? 'text-maroon font-bold' : 'text-charcoal hover:text-maroon'
+    }`;
 
   return (
     <>
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? 'bg-white/95 backdrop-blur-md shadow-luxury py-2 border-b border-gold/20'
-            : 'bg-beige/80 backdrop-blur-sm py-4 border-b border-gold/10'
+            ? 'bg-white/97 backdrop-blur-md shadow-luxury py-2 border-b border-gold/20'
+            : 'bg-beige/80 backdrop-blur-sm py-3 border-b border-gold/10'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,35 +87,31 @@ export const Navbar: React.FC = () => {
             </button>
 
             {/* Brand Logo */}
-            <Link href="/" className="flex flex-col items-center group text-center">
-              <div className="flex items-center gap-1.5">
-                <Gem className="w-5 h-5 text-gold group-hover:rotate-12 transition-transform duration-300" />
-                <span className="font-serif text-2xl lg:text-3xl font-bold tracking-wider text-maroon group-hover:text-gold transition-colors">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gold/60 shadow-md group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(200,155,60,0.4)] transition-all duration-300">
+                <Image src="/images/logo.jpg" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-xl lg:text-2xl font-bold tracking-wider text-maroon group-hover:text-gold transition-colors leading-tight">
                   CHARMIKA
                 </span>
+                <span className="text-[9px] sm:text-[10px] tracking-[0.25em] font-sans font-medium text-gold uppercase">
+                  By Lekshmi
+                </span>
               </div>
-              <span className="text-[10px] tracking-[0.25em] font-sans font-medium text-gold uppercase mt-0.5">
-                By Lekshmi
-              </span>
             </Link>
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-3 sm:space-x-5">
-              {/* Search Trigger */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-charcoal hover:text-gold transition-colors relative"
+                className="p-2 text-charcoal hover:text-gold transition-colors"
                 title="Search Jewellery"
               >
                 <Search className="w-5 h-5" />
               </button>
 
-              {/* Wishlist Icon */}
-              <Link
-                href="/wishlist"
-                className="p-2 text-charcoal hover:text-gold transition-colors relative"
-                title="View Wishlist"
-              >
+              <Link href="/wishlist" className="p-2 text-charcoal hover:text-gold transition-colors relative" title="View Wishlist">
                 <Heart className="w-5 h-5" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-gold text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
@@ -103,7 +120,6 @@ export const Navbar: React.FC = () => {
                 )}
               </Link>
 
-              {/* Cart Icon */}
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="p-2 text-charcoal hover:text-gold transition-colors relative"
@@ -119,160 +135,433 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center justify-center space-x-6 pt-3 mt-2 border-t border-gold/10 text-xs tracking-wider uppercase font-medium">
-            <Link
-              href="/"
-              className={`hover:text-gold transition-colors ${
-                pathname === '/' ? 'text-maroon font-bold border-b-2 border-gold pb-1' : 'text-charcoal'
-              }`}
-            >
+          {/* ─── Desktop Mega Nav Bar ─────────────────────────────────── */}
+          <nav className="hidden lg:flex items-center justify-center gap-1 pt-3 mt-2 border-t border-gold/10">
+
+            {/* HOME */}
+            <Link href="/" className={navLinkClass('/', 'px-3 py-2')}>
               Home
+              {isActive('/') && <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-gold rounded-full" />}
             </Link>
 
-            <Link
-              href="/shop?sort=newest"
-              className="text-maroon font-semibold hover:text-gold transition-colors flex items-center gap-1"
-            >
-              <Sparkles className="w-3 h-3 text-gold" />
-              New Arrivals
-            </Link>
-
-            {/* Categories Dropdown */}
+            {/* NEW ARRIVALS */}
             <div
-              className="relative group"
-              onMouseEnter={() => setActiveDropdown('categories')}
-              onMouseLeave={() => setActiveDropdown(null)}
+              className="relative"
+              onMouseEnter={() => openMenu('new')}
+              onMouseLeave={closeMenu}
             >
               <button
-                onClick={() => setActiveDropdown(activeDropdown === 'categories' ? null : 'categories')}
-                className="flex items-center gap-1 text-charcoal group-hover:text-gold transition-colors py-2 font-medium"
+                className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-semibold text-maroon hover:text-gold transition-colors px-3 py-2"
+                onFocus={() => openMenu('new')}
               >
-                Categories
-                <ChevronDown className={`w-3.5 h-3.5 text-gold transition-transform duration-300 ${activeDropdown === 'categories' ? 'rotate-180' : ''}`} />
+                <Sparkles className="w-3 h-3 text-gold" />
+                New Arrivals
+                <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'new' ? 'rotate-180' : ''}`} />
               </button>
-
-              {activeDropdown === 'categories' && (
-                <div className="absolute top-full -left-4 w-[420px] bg-white rounded-2xl shadow-2xl p-4 z-50 grid grid-cols-2 gap-1.5 border border-gold/40 animate-slide-up">
-                  {categoryMenu.map((cat) => (
-                    <Link
-                      key={cat.name}
-                      href={cat.href}
-                      onClick={() => setActiveDropdown(null)}
-                      className="px-3.5 py-2.5 text-xs text-charcoal/90 hover:bg-gold/15 hover:text-maroon rounded-xl font-medium transition-all flex items-center justify-between group/item border border-transparent hover:border-gold/20"
-                    >
-                      <span className="truncate">{cat.name}</span>
-                      <span className="text-[10px] text-gold font-bold group-hover/item:translate-x-0.5 transition-transform">→</span>
-                    </Link>
-                  ))}
-                  <div className="col-span-2 pt-2 mt-1 border-t border-gold/20 flex justify-between items-center text-[11px]">
-                    <span className="text-charcoal/60">Handcrafted in Kottayam</span>
-                    <Link
-                      href="/shop"
-                      onClick={() => setActiveDropdown(null)}
-                      className="text-maroon font-bold hover:text-gold uppercase tracking-wider"
-                    >
-                      View All Products →
+              {activeMenu === 'new' && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  onMouseEnter={stayOpen}
+                  onMouseLeave={closeMenu}
+                >
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">✨ Fresh Additions</p>
+                      <Link href="/shop?sort=newest" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold uppercase tracking-wider">
+                        View All →
+                      </Link>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {[
+                        { href: '/shop?sort=newest&category=necklaces', label: 'New Necklaces', badge: 'Just In', color: 'bg-maroon text-white' },
+                        { href: '/shop?sort=newest&category=earrings', label: 'New Earrings', badge: 'Trending', color: 'bg-gold text-maroon' },
+                        { href: '/shop?sort=newest&category=temple-jewellery', label: 'Temple Collection', badge: 'New', color: 'bg-maroon text-white' },
+                        { href: '/shop?sort=newest&category=anti-tarnish-jewellery', label: 'Anti Tarnish Series', badge: 'Popular', color: 'bg-gold text-maroon' },
+                        { href: '/shop?sort=newest&category=bangles-bracelets', label: 'New Bangles', badge: 'New', color: 'bg-maroon text-white' },
+                        { href: '/shop?sort=newest', label: 'All New Arrivals', badge: '🌟', color: 'bg-beige text-maroon' },
+                      ].map(({ href, label, badge, color }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setActiveMenu(null)}
+                          className="flex items-center justify-between p-3 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/item"
+                        >
+                          <span className="text-xs font-medium text-charcoal group-hover/item:text-maroon">{label}</span>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${color}`}>{badge}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-maroon/5 border-t border-gold/20 px-5 py-3 flex items-center justify-between">
+                    <p className="text-[10px] text-charcoal/60">Handcrafted in Kottayam, Kerala</p>
+                    <Link href="/shop?sort=newest" onClick={() => setActiveMenu(null)} className="text-[10px] font-bold text-maroon hover:text-gold transition-colors">
+                      Shop New Arrivals →
                     </Link>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Rental Section Link */}
-            <Link
-              href="/rental"
-              className="text-maroon font-semibold hover:text-gold transition-colors flex items-center gap-1 bg-gold/10 px-2.5 py-1 rounded-full border border-gold/30"
+            {/* CATEGORIES */}
+            <div
+              className="relative"
+              onMouseEnter={() => openMenu('categories')}
+              onMouseLeave={closeMenu}
             >
-              <Clock className="w-3 h-3 text-gold" />
-              Rental Jewellery
-            </Link>
+              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium text-charcoal hover:text-maroon transition-colors px-3 py-2">
+                Categories
+                <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'categories' ? 'rotate-180' : ''}`} />
+              </button>
+              {activeMenu === 'categories' && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[620px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  onMouseEnter={stayOpen}
+                  onMouseLeave={closeMenu}
+                >
+                  <div className="grid grid-cols-3">
+                    {/* Left: categories grid */}
+                    <div className="col-span-2 p-5">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Shop by Category</p>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {categoryMenu.map((cat) => (
+                          <Link
+                            key={cat.name}
+                            href={cat.href}
+                            onClick={() => setActiveMenu(null)}
+                            className="flex items-center gap-2.5 px-3 py-2.5 text-xs text-charcoal/90 hover:bg-gold/15 hover:text-maroon rounded-xl font-medium transition-all border border-transparent hover:border-gold/20 group/item"
+                          >
+                            <span className="text-base">{cat.icon}</span>
+                            <span>{cat.name}</span>
+                            <span className="ml-auto text-[10px] text-gold font-bold opacity-0 group-hover/item:opacity-100 transition-opacity">→</span>
+                          </Link>
+                        ))}
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gold/20 flex justify-between items-center">
+                        <span className="text-[10px] text-charcoal/50">10 categories · 200+ products</span>
+                        <Link href="/shop" onClick={() => setActiveMenu(null)} className="text-[11px] text-maroon font-bold hover:text-gold uppercase tracking-wider transition-colors">
+                          View All Products →
+                        </Link>
+                      </div>
+                    </div>
+                    {/* Right: spotlight */}
+                    <div className="bg-gradient-to-b from-maroon to-maroon-950 p-5 flex flex-col gap-4">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">Spotlight</p>
+                      {[
+                        { href: '/shop?category=temple-jewellery', label: 'Temple Collection', sub: 'Traditional & Divine' },
+                        { href: '/shop?category=anti-tarnish-jewellery', label: 'Daily Wear', sub: 'Anti-Tarnish Series' },
+                        { href: '/shop?category=ad-stone-jewellery', label: 'AD Stone', sub: 'Premium Zirconia' },
+                      ].map(({ href, label, sub }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setActiveMenu(null)}
+                          className="group/spot block p-3 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 transition-all"
+                        >
+                          <p className="text-xs font-semibold text-white group-hover/spot:text-gold transition-colors">{label}</p>
+                          <p className="text-[10px] text-white/50 mt-0.5">{sub}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            {/* Combo Offers Link */}
-            <Link
-              href="/combos"
-              className="hover:text-gold transition-colors text-charcoal"
+            {/* RENTAL JEWELLERY */}
+            <div
+              className="relative"
+              onMouseEnter={() => openMenu('rental')}
+              onMouseLeave={closeMenu}
             >
-              Combo Collection
-            </Link>
+              <button className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-maroon hover:text-gold transition-colors bg-gold/10 px-3 py-1.5 rounded-full border border-gold/30">
+                <Clock className="w-3 h-3 text-gold" />
+                Rental Jewellery
+                <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'rental' ? 'rotate-180' : ''}`} />
+              </button>
+              {activeMenu === 'rental' && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  onMouseEnter={stayOpen}
+                  onMouseLeave={closeMenu}
+                >
+                  <div className="grid grid-cols-2">
+                    <div className="p-5">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Rent by Occasion</p>
+                      <div className="flex flex-col gap-1.5">
+                        {[
+                          { href: '/rental?filter=bridal', label: '👰 Bridal Sets', desc: 'Full bridal jewellery' },
+                          { href: '/rental?filter=engagement', label: '💍 Engagement', desc: 'Ring ceremony pieces' },
+                          { href: '/rental?filter=reception', label: '🌸 Reception', desc: 'Elegant reception sets' },
+                          { href: '/rental?filter=function', label: '🎉 Function Wear', desc: 'Family events & parties' },
+                          { href: '/rental?filter=photoshoot', label: '📸 Photo Shoots', desc: 'Professional shoots' },
+                          { href: '/rental', label: '✨ All Rental Pieces', desc: 'View complete catalogue' },
+                        ].map(({ href, label, desc }) => (
+                          <Link
+                            key={href}
+                            href={href}
+                            onClick={() => setActiveMenu(null)}
+                            className="group/r flex items-center justify-between p-2.5 rounded-xl hover:bg-gold/10 border border-transparent hover:border-gold/20 transition-all"
+                          >
+                            <div>
+                              <p className="text-xs font-semibold text-maroon group-hover/r:text-gold transition-colors">{label}</p>
+                              <p className="text-[10px] text-charcoal/50">{desc}</p>
+                            </div>
+                            <span className="text-[10px] text-gold font-bold opacity-0 group-hover/r:opacity-100 transition-opacity">→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="bg-maroon p-5 flex flex-col justify-between">
+                      <div>
+                        <p className="text-gold font-serif text-base font-bold mb-2">Why Rent?</p>
+                        <div className="space-y-3">
+                          {[
+                            { icon: '💰', title: 'Save Up to 90%', sub: 'Fraction of purchase cost' },
+                            { icon: '🌟', title: 'Premium Quality', sub: 'Grand bridal sets' },
+                            { icon: '🚚', title: 'Door Delivery', sub: 'Kottayam & nearby' },
+                            { icon: '🧹', title: 'Sanitized', sub: 'Cleaned before dispatch' },
+                          ].map(({ icon, title, sub }) => (
+                            <div key={title} className="flex items-start gap-2.5">
+                              <span className="text-lg">{icon}</span>
+                              <div>
+                                <p className="text-white text-xs font-semibold">{title}</p>
+                                <p className="text-white/60 text-[10px]">{sub}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <Link
+                        href="/rental"
+                        onClick={() => setActiveMenu(null)}
+                        className="mt-4 block text-center text-[11px] font-bold py-2.5 rounded-xl bg-gold text-maroon hover:bg-white transition-colors"
+                      >
+                        Explore Rentals →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            {/* Offers Link */}
-            <Link
-              href="/offers"
-              className="text-maroon hover:text-gold transition-colors font-bold"
+            {/* COMBO COLLECTION */}
+            <div
+              className="relative"
+              onMouseEnter={() => openMenu('combo')}
+              onMouseLeave={closeMenu}
             >
-              Offers & Festival
-            </Link>
+              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium text-charcoal hover:text-maroon transition-colors px-3 py-2">
+                Combo Collection
+                <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'combo' ? 'rotate-180' : ''}`} />
+              </button>
+              {activeMenu === 'combo' && (
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  onMouseEnter={stayOpen}
+                  onMouseLeave={closeMenu}
+                >
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">🎁 Value Combo Sets</p>
+                      <Link href="/combos" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold">
+                        See All →
+                      </Link>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { href: '/combos?type=bridal', label: '👰 Bridal Combo', desc: 'Complete bridal set', tag: 'Best Value' },
+                        { href: '/combos?type=party', label: '🎉 Party Set', desc: 'Necklace + Earrings', tag: 'Popular' },
+                        { href: '/combos?type=temple', label: '🛕 Temple Set', desc: 'Traditional full set', tag: 'Heritage' },
+                        { href: '/combos?type=daily', label: '☀️ Daily Wear Set', desc: 'Anti-tarnish 3-piece', tag: 'Everyday' },
+                        { href: '/combos?type=gifting', label: '🎀 Gift Combos', desc: 'Ready-to-gift packaging', tag: 'Gifting' },
+                        { href: '/combos', label: '✨ All Combos', desc: 'Browse every set', tag: 'View All' },
+                      ].map(({ href, label, desc, tag }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setActiveMenu(null)}
+                          className="flex flex-col gap-1 p-3 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/c"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-semibold text-maroon group-hover/c:text-gold transition-colors">{label}</span>
+                            <span className="text-[9px] bg-maroon/10 text-maroon px-1.5 py-0.5 rounded-full font-bold">{tag}</span>
+                          </div>
+                          <span className="text-[10px] text-charcoal/50">{desc}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-gold/10 border-t border-gold/20 px-5 py-3 flex items-center gap-2">
+                    <Gift className="w-4 h-4 text-gold" />
+                    <p className="text-[11px] text-maroon font-semibold">Save more with curated combo sets — Exclusive pricing!</p>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            <Link href="/about" className="hover:text-gold transition-colors text-charcoal">
-              About Us
-            </Link>
+            {/* OFFERS & FESTIVAL */}
+            <div
+              className="relative"
+              onMouseEnter={() => openMenu('offers')}
+              onMouseLeave={closeMenu}
+            >
+              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-bold text-maroon hover:text-gold transition-colors px-3 py-2">
+                <Zap className="w-3 h-3 text-gold" />
+                Offers & Festival
+                <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'offers' ? 'rotate-180' : ''}`} />
+              </button>
+              {activeMenu === 'offers' && (
+                <div
+                  className="absolute top-full right-0 mt-2 w-[520px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  onMouseEnter={stayOpen}
+                  onMouseLeave={closeMenu}
+                >
+                  <div className="grid grid-cols-2">
+                    <div className="p-5">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">🎊 Active Offers</p>
+                      <div className="flex flex-col gap-2">
+                        {[
+                          { code: 'WELCOME10', desc: '10% off — First order, no min spend!', color: 'bg-gold text-maroon' },
+                          { code: 'CHARMIKA10', desc: '10% off on ₹2,000+', color: 'bg-maroon text-white' },
+                          { code: 'ROYAL500', desc: '₹500 off on ₹5,000+', color: 'bg-maroon text-white' },
+                          { code: 'BRIDAL15', desc: '15% off on ₹15,000+', color: 'bg-maroon text-white' },
+                        ].map(({ code, desc, color }) => (
+                          <div key={code} className="flex items-center justify-between p-3 rounded-xl border border-gold/15 bg-beige/40">
+                            <div>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded font-mono tracking-wider ${color}`}>{code}</span>
+                              <p className="text-[10px] text-charcoal/60 mt-1">{desc}</p>
+                            </div>
+                            <Tag className="w-4 h-4 text-gold" />
+                          </div>
+                        ))}
+                        <Link
+                          href="/offers"
+                          onClick={() => setActiveMenu(null)}
+                          className="mt-1 text-center text-[11px] font-bold py-2 rounded-xl border-2 border-gold text-maroon hover:bg-gold hover:text-white transition-colors"
+                        >
+                          All Coupons & Offers →
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-b from-maroon to-maroon-950 p-5 flex flex-col gap-3">
+                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">Festival Collections</p>
+                      {[
+                        { href: '/shop?festival=onam', label: '🌸 Onam Collection', sub: 'Traditional Kerala sets' },
+                        { href: '/shop?festival=wedding', label: '💒 Wedding Season', sub: 'Bridal & event wear' },
+                        { href: '/shop?festival=diwali', label: '🪔 Diwali Specials', sub: 'Festive gold-look sets' },
+                        { href: '/shop?festival=christmas', label: '🎄 Christmas Picks', sub: 'Gift-ready jewellery' },
+                        { href: '/offers', label: '🎁 All Festival Deals', sub: 'View every active deal' },
+                      ].map(({ href, label, sub }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setActiveMenu(null)}
+                          className="group/o block p-3 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 transition-all"
+                        >
+                          <p className="text-xs font-semibold text-white group-hover/o:text-gold transition-colors">{label}</p>
+                          <p className="text-[10px] text-white/50">{sub}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            <Link href="/contact" className="hover:text-gold transition-colors text-charcoal">
+            {/* ABOUT & CONTACT (slim) */}
+            <Link href="/about" className={navLinkClass('/about', 'px-3 py-2')}>
+              About
+            </Link>
+            <Link href="/contact" className={navLinkClass('/contact', 'px-3 py-2')}>
               Contact
             </Link>
           </nav>
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* ─── Mobile Drawer Menu ───────────────────────────────────────── */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs" onClick={() => setIsMobileMenuOpen(false)} />
           <div className="relative w-4/5 max-w-xs bg-beige h-full shadow-2xl overflow-y-auto p-5 flex flex-col justify-between">
             <div>
               <div className="flex justify-between items-center pb-4 border-b border-gold/20">
-                <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                  <span className="font-serif text-xl font-bold text-maroon">CHARMIKA</span>
-                  <span className="block text-[9px] text-gold uppercase tracking-widest">By Lekshmi</span>
+                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2.5">
+                  <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gold shadow-sm">
+                    <Image src="/images/logo.jpg" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
+                  </div>
+                  <div>
+                    <span className="font-serif text-lg font-bold text-maroon block leading-tight">CHARMIKA</span>
+                    <span className="block text-[8px] text-gold uppercase tracking-widest">By Lekshmi</span>
+                  </div>
                 </Link>
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-charcoal">
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
-              <div className="mt-6 flex flex-col space-y-3 text-sm font-medium text-charcoal">
-                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-gold/10">
-                  Home
+              <div className="mt-5 flex flex-col space-y-1 text-sm font-medium text-charcoal">
+                <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2">
+                  🏠 Home
+                </Link>
+                <Link href="/shop?sort=newest" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                  <Sparkles className="w-4 h-4 text-gold" /> New Arrivals
                 </Link>
 
-                <Link href="/rental" onClick={() => setIsMobileMenuOpen(false)} className="py-2 text-maroon font-bold border-b border-gold/10 flex items-center justify-between">
-                  <span>Rental Jewellery</span>
-                  <span className="bg-gold text-white text-[10px] px-2 py-0.5 rounded-full">Popular</span>
-                </Link>
-
-                <Link href="/combos" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-gold/10">
-                  Combo Offers
-                </Link>
-
-                <div className="py-2">
-                  <span className="text-xs uppercase text-gold font-bold tracking-wider block mb-2">Categories</span>
-                  <div className="pl-3 flex flex-col space-y-2 text-xs">
-                    {categoryMenu.map((cat) => (
-                      <Link
-                        key={cat.name}
-                        href={cat.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="py-1 text-charcoal hover:text-maroon"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
+                {/* Categories Accordion */}
+                <div>
+                  <button
+                    onClick={() => setMobileCatOpen(!mobileCatOpen)}
+                    className="w-full flex items-center justify-between py-3 px-2 border-b border-gold/10 text-left"
+                  >
+                    <span>📦 Categories</span>
+                    <ChevronDown className={`w-4 h-4 text-gold transition-transform ${mobileCatOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mobileCatOpen && (
+                    <div className="pl-4 pb-2 flex flex-col gap-0.5 bg-white/60 rounded-xl mt-1">
+                      {categoryMenu.map((cat) => (
+                        <Link
+                          key={cat.name}
+                          href={cat.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="py-2 px-3 text-xs text-charcoal hover:text-maroon flex items-center gap-2"
+                        >
+                          <span>{cat.icon}</span> {cat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <Link href="/offers" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-gold/10">
-                  Offers & Coupons
+                <Link href="/rental" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center justify-between text-maroon font-bold">
+                  <span className="flex items-center gap-2"><Clock className="w-4 h-4 text-gold" /> Rental Jewellery</span>
+                  <span className="bg-gold text-white text-[10px] px-2 py-0.5 rounded-full">Popular</span>
                 </Link>
-                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-gold/10">
-                  About Us
+                <Link href="/combos" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2">
+                  🎁 Combo Collection
                 </Link>
-                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-gold/10">
-                  Contact Us
+                <Link href="/offers" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                  <Zap className="w-4 h-4 text-gold" /> Offers & Festival
                 </Link>
+                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10">
+                  👤 About Us
+                </Link>
+                <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10">
+                  📞 Contact Us
+                </Link>
+                <Link href="/return-policy" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 text-xs text-charcoal/60">
+                  Return Policy
+                </Link>
+              </div>
+
+              {/* Promo codes preview */}
+              <div className="mt-5 p-4 bg-maroon/5 border border-gold/20 rounded-2xl">
+                <p className="text-[10px] uppercase tracking-wider text-gold font-bold mb-2">Active Promo Codes</p>
+                {['CHARMIKA10', 'ROYAL500', 'BRIDAL15'].map((code) => (
+                  <span key={code} className="inline-block mr-2 mb-1 text-[10px] font-mono font-bold bg-maroon text-white px-2 py-0.5 rounded">
+                    {code}
+                  </span>
+                ))}
               </div>
             </div>
 

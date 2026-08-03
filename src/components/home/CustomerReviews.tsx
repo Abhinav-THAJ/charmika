@@ -45,7 +45,7 @@ export const CustomerReviews: React.FC = () => {
             Real Stories & Praise
           </span>
           <h2 className="font-serif text-2xl sm:text-4xl font-bold text-maroon">
-            What Our Patrons Say
+            What Our Happy Customers Say
           </h2>
           <div className="w-16 h-0.5 bg-gold mx-auto mt-3" />
         </div>

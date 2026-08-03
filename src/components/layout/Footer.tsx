@@ -1,20 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { Gem, MapPin, Phone, Mail, Instagram, Facebook, ShieldCheck, Award, RefreshCw, Send } from 'lucide-react';
+import Image from 'next/image';
+import { Gem, MapPin, Phone, Mail, Instagram, Facebook, ShieldCheck, Award, RefreshCw } from 'lucide-react';
 
 export const Footer: React.FC = () => {
-  const [emailInput, setEmailInput] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (emailInput) {
-      setSubscribed(true);
-      setEmailInput('');
-    }
-  };
 
   return (
     <footer className="bg-maroon-950 text-white pt-16 pb-8 border-t-2 border-gold/40 relative overflow-hidden">
@@ -37,21 +28,30 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col items-center p-4 rounded-xl bg-white/5 border border-gold/10">
             <RefreshCw className="w-8 h-8 text-gold mb-2" />
             <h4 className="font-serif text-sm font-bold text-gold">Sanitized & Safe Delivery</h4>
-            <p className="text-xs text-white/70 mt-1">Inspected, anti-tarnish protected, and safely shipped in velvet cases.</p>
+            <p className="text-xs text-white/70 mt-1">Inspected, anti-tarnish protected, and safely shipped.</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-gold/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 border-b border-gold/20">
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
-            <Link href="/" className="inline-block">
-              <div className="flex items-center gap-2">
-                <Gem className="w-6 h-6 text-gold" />
-                <span className="font-serif text-2xl font-bold text-white">CHARMIKA</span>
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gold/70 shadow-[0_0_15px_rgba(200,155,60,0.3)] group-hover:scale-105 transition-transform duration-300">
+                <Image
+                  src="/images/logo.jpg"
+                  alt="CHARMIKA JEWELLERY"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <span className="text-[10px] tracking-[0.3em] font-sans font-medium text-gold uppercase block mt-0.5">
-                By Lekshmi
-              </span>
+              <div className="flex flex-col">
+                <span className="font-serif text-2xl font-bold text-white group-hover:text-gold transition-colors leading-tight">
+                  CHARMIKA
+                </span>
+                <span className="text-[10px] tracking-[0.3em] font-sans font-medium text-gold uppercase">
+                  By Lekshmi
+                </span>
+              </div>
             </Link>
 
             <p className="text-xs text-white/70 leading-relaxed font-light max-w-sm">
@@ -75,6 +75,27 @@ export const Footer: React.FC = () => {
                   charmikajewel@gmail.com
                 </a>
               </div>
+            </div>
+
+            <div className="pt-2 flex items-center space-x-3">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 bg-white/10 hover:bg-gold hover:text-maroon rounded-full transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                className="p-2 bg-white/10 hover:bg-gold hover:text-maroon rounded-full transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
@@ -155,60 +176,6 @@ export const Footer: React.FC = () => {
               </li>
             </ul>
           </div>
-
-          {/* Col 4: Newsletter */}
-          <div>
-            <h4 className="font-serif text-sm font-bold text-gold uppercase tracking-wider mb-4">
-              Newsletter
-            </h4>
-            <p className="text-xs text-white/70 mb-3 font-light">
-              Subscribe to receive exclusive royal collection launches, private rental access & ₹500 discount vouchers.
-            </p>
-
-            {subscribed ? (
-              <div className="p-3 bg-gold/20 border border-gold/40 rounded text-xs text-gold font-medium">
-                Thank you! Use coupon code <span className="font-bold underline">CHARMIKA10</span> for 10% off your order!
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <div className="relative">
-                  <input
-                    type="email"
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    placeholder="Your Email Address"
-                    required
-                    className="w-full px-3 py-2 bg-white/10 text-white placeholder-white/40 rounded border border-gold/30 text-xs focus:outline-none focus:border-gold"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-1 top-1 bottom-1 px-3 bg-gold text-maroon-950 font-bold rounded text-xs hover:bg-white transition-colors flex items-center gap-1"
-                  >
-                    <Send className="w-3 h-3" />
-                  </button>
-                </div>
-              </form>
-            )}
-
-            <div className="mt-6 flex items-center space-x-3">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 bg-white/10 hover:bg-gold hover:text-maroon rounded-full transition-colors"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 bg-white/10 hover:bg-gold hover:text-maroon rounded-full transition-colors"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
         </div>
 
         {/* Bottom copyright & legal */}
@@ -221,7 +188,7 @@ export const Footer: React.FC = () => {
             <span>•</span>
             <span className="hover:text-gold cursor-pointer">Rental Policy</span>
             <span>•</span>
-            <span className="hover:text-gold cursor-pointer">Return Policy</span>
+            <Link href="/return-policy" className="hover:text-gold transition-colors">Return Policy</Link>
           </div>
         </div>
       </div>

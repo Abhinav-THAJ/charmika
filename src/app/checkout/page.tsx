@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     country: 'India',
   });
 
-  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'cod'>('upi');
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card'>('upi');
   const [submitting, setSubmitting] = useState(false);
 
   const handlePlaceOrder = (e: React.FormEvent) => {
@@ -190,22 +190,6 @@ export default function CheckoutPage() {
                     <div>
                       <span className="font-serif font-bold text-sm text-maroon block">Credit / Debit Card / Net Banking</span>
                       <span className="text-[11px] text-charcoal/60">Visa, Mastercard, RuPay & Top Indian Banks</span>
-                    </div>
-                  </div>
-                </label>
-
-                <label className="flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all bg-beige/30 hover:border-gold">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="payment"
-                      checked={paymentMethod === 'cod'}
-                      onChange={() => setPaymentMethod('cod')}
-                      className="accent-maroon"
-                    />
-                    <div>
-                      <span className="font-serif font-bold text-sm text-maroon block">Cash On Delivery (COD)</span>
-                      <span className="text-[11px] text-charcoal/60">Pay cash upon inspect & receive</span>
                     </div>
                   </div>
                 </label>

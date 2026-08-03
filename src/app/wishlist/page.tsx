@@ -92,11 +92,6 @@ export default function WishlistPage() {
                   <span className="bg-gold/90 text-maroon-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider backdrop-blur-xs">
                     {product.jewelleryType}
                   </span>
-                  {product.isRentalAvailable && (
-                    <span className="bg-white/90 text-maroon text-[10px] font-semibold px-2 py-0.5 rounded border border-gold/30 flex items-center gap-1">
-                      <Clock className="w-2.5 h-2.5 text-gold" /> Rental Available
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -122,11 +117,6 @@ export default function WishlistPage() {
                         </span>
                       )}
                     </div>
-                    {product.isRentalAvailable && product.rentalPricePerDay && (
-                      <span className="text-xs font-semibold text-gold">
-                        Rent: ₹{product.rentalPricePerDay}/day
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -138,21 +128,12 @@ export default function WishlistPage() {
                     <ShoppingBag className="w-3.5 h-3.5" /> Buy Now
                   </button>
 
-                  {product.isRentalAvailable ? (
-                    <button
-                      onClick={() => addToCart(product, true, 3)}
-                      className="py-2.5 bg-gold hover:bg-maroon hover:text-white text-maroon font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1 shadow-xs"
-                    >
-                      <Clock className="w-3.5 h-3.5" /> Rent (3D)
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => toggleWishlist(product)}
-                      className="py-2.5 border border-gold/30 hover:border-red-500 hover:text-red-600 text-charcoal/70 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  )}
+                  <button
+                    onClick={() => toggleWishlist(product)}
+                    className="py-2.5 border border-gold/30 hover:border-red-500 hover:text-red-600 text-charcoal/70 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-1"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Remove
+                  </button>
                 </div>
               </div>
             </div>

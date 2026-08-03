@@ -8,6 +8,7 @@ import { QuickViewModal } from '@/components/product/QuickViewModal';
 import { AuthModal } from '@/components/account/AuthModal';
 import { WhatsAppFloat } from '@/components/common/WhatsAppFloat';
 import { BackToTop } from '@/components/common/BackToTop';
+import { Preloader } from '@/components/common/Preloader';
 import { CartProvider } from '@/context/CartContext';
 import { WishlistProvider } from '@/context/WishlistContext';
 import { AuthProvider } from '@/context/AuthContext';
@@ -52,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <Footer />
 
                     {/* Drawers & Floating Action Overlays */}
+                    <Preloader />
                     <CartDrawer />
                     <QuickViewModal />
                     <AuthModal />

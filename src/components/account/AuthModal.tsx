@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { X, Gem, Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -31,8 +32,15 @@ export const AuthModal: React.FC = () => {
         </button>
 
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-1.5 justify-center mb-2">
-            <Gem className="w-6 h-6 text-gold" />
+          <div className="inline-flex items-center gap-2.5 justify-center mb-2">
+            <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gold shadow-sm">
+              <Image
+                src="/images/logo.jpg"
+                alt="CHARMIKA JEWELLERY"
+                fill
+                className="object-cover"
+              />
+            </div>
             <span className="font-serif text-2xl font-bold text-maroon">CHARMIKA</span>
           </div>
           <p className="text-xs text-charcoal/60">

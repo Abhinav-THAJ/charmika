@@ -17,7 +17,7 @@ const SLIDES = [
   {
     id: 2,
     title: 'Rent Royal Jewellery For Special Days',
-    subtitle: 'Wear 22k gold plated & Kundan masterpieces at a fraction of the cost. Simple booking & deposit refund.',
+    subtitle: 'Explore gold plated & Kundan masterpieces crafted for weddings, grand events & defining celebrations.',
     image: 'https://images.unsplash.com/photo-1611591475281-b3ed997a61d1?q=80&w=1600&auto=format&fit=crop',
     ctaPrimary: { text: 'Explore Rental Booking', href: '/rental' },
     ctaSecondary: { text: 'View Combos', href: '/combos' },
@@ -26,7 +26,7 @@ const SLIDES = [
   {
     id: 3,
     title: 'Luminous AD Stone & Anti Tarnish Pieces',
-    subtitle: 'Waterproof everyday luxury designed for modern grace with AAA+ Cubic Zirconia brilliance.',
+    subtitle: 'Waterproof everyday luxury designed for modern grace.',
     image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1600&auto=format&fit=crop',
     ctaPrimary: { text: 'Shop AD Stone Collection', href: '/shop?category=ad-stone-jewellery' },
     ctaSecondary: { text: 'View Festival Offers', href: '/offers' },
@@ -101,10 +101,8 @@ export const HeroSlider: React.FC = () => {
 
           <div className="pt-6 flex items-center space-x-6 text-xs text-white/70">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-gold" /> Certified Handcrafted Quality
+              <ShieldCheck className="w-4 h-4 text-gold" /> Handcrafted Quality
             </span>
-            <span>•</span>
-            <span>Easy Doorstep Rental Returns</span>
           </div>
         </div>
       </div>
