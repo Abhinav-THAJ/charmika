@@ -131,132 +131,45 @@ export default function ProductDetailPage({ params }: PageProps) {
                   </button>
                 ))}
               </div>
-            )}
-
-            <div className="p-4 bg-beige/60 rounded-xl border border-gold/20 flex items-center justify-between text-xs text-charcoal/80">
-              <span className="flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-4 h-4 text-gold" /> Guaranteed Quality & Anti-Tarnish Finish
-              </span>
-              <button className="text-gold hover:text-maroon flex items-center gap-1 font-bold">
-                <Share2 className="w-3.5 h-3.5" /> Share
-              </button>
-            </div>
-          </div>
+            )}          </div>
 
           {/* Product Details Column */}
           <div className="flex flex-col justify-between space-y-6">
             <div>
-              <div className="flex items-center justify-between text-xs text-gold font-bold uppercase tracking-wider mb-2">
-                <span>{product.jewelleryType}</span>
-                <span className="text-charcoal/50">SKU: {product.sku}</span>
+              <div className="flex items-center justify-end text-xs text-charcoal/50 font-medium mb-2">
+                <span>SKU: {product.sku}</span>
               </div>
 
               <h1 className="font-serif text-2xl sm:text-4xl font-bold text-maroon leading-tight">
                 {product.name}
               </h1>
 
-              {/* Rating */}
-              <div className="flex items-center gap-2 mt-3 text-xs text-amber-500 font-semibold">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span>{product.rating} / 5</span>
-                <span className="text-charcoal/50">({product.reviewCount} customer reviews)</span>
-              </div>
 
-              {/* Purchase vs Rental Option Switcher */}
+
+              {/* Purchase Price Container */}
               <div className="mt-6 p-4 bg-beige/80 rounded-2xl border border-gold/30">
-                <div className="flex rounded-xl bg-white p-1 mb-4 border border-gold/20 shadow-xs">
-                  <button
-                    onClick={() => setSelectedMode('buy')}
-                    className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all ${
-                      selectedMode === 'buy' ? 'bg-maroon text-white shadow-md' : 'text-charcoal/70 hover:text-maroon'
-                    }`}
-                  >
-                    Buy Outright
-                  </button>
-                  {product.isRentalAvailable && (
-                    <button
-                      onClick={() => setSelectedMode('rent')}
-                      className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
-                        selectedMode === 'rent' ? 'bg-gold text-maroon-950 shadow-md' : 'text-charcoal/70 hover:text-maroon'
-                      }`}
-                    >
-                      <Clock className="w-4 h-4" /> Rent For Event
-                    </button>
+                <div>
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-serif font-bold text-3xl text-maroon">
+                      ₹{product.price.toLocaleString('en-IN')}
+                    </span>
+                    {product.regularPrice > product.price && (
+                      <span className="text-sm text-charcoal/40 line-through">
+                        ₹{product.regularPrice.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+                  {product.stockStatus === 'outofstock' ? (
+                    <p className="text-[11px] text-rose-600 font-bold mt-1 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-600" /> Out of Stock — Currently Unavailable
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-emerald-700 font-bold mt-1 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> In Stock • Ready for express shipping
+                    </p>
                   )}
                 </div>
-
-                {selectedMode === 'buy' ? (
-                  <div>
-                    <div className="flex items-baseline gap-3">
-                      <span className="font-serif font-bold text-3xl text-maroon">
-                        ₹{product.price.toLocaleString('en-IN')}
-                      </span>
-                      {product.regularPrice > product.price && (
-                        <span className="text-sm text-charcoal/40 line-through">
-                          ₹{product.regularPrice.toLocaleString('en-IN')}
-                        </span>
-                      )}
-                      <span className="bg-gold/20 text-maroon text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                        Taxes Included
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-green-700 font-medium mt-1">In Stock • Ready for express shipping</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-baseline justify-between">
-                      <div>
-                        <span className="font-serif font-bold text-2xl text-maroon">
-                          ₹{((product.rentalPricePerDay || 500) * rentalDays).toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-xs text-charcoal/70 block">
-                          Total Rental Fee for {rentalDays} Days (₹{product.rentalPricePerDay}/day)
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-charcoal mb-1.5">
-                        Select Rental Period:
-                      </label>
-                      <div className="flex gap-3">
-                        {[3, 5, 7].map((days) => (
-                          <button
-                            key={days}
-                            onClick={() => setRentalDays(days)}
-                            className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${
-                              rentalDays === days
-                                ? 'bg-maroon text-white border-maroon shadow-xs'
-                                : 'bg-white text-charcoal border-gold/30 hover:border-gold'
-                            }`}
-                          >
-                            {days} Days
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="p-3 bg-white rounded-lg border border-gold/20 text-[11px] text-charcoal/80 space-y-1">
-                      <p className="font-semibold text-maroon">Rental Security Terms:</p>
-                      <p>• Refundable Deposit: ₹{(product.securityDeposit || 2000).toLocaleString('en-IN')}</p>
-                      <p>• Free prepaid return pouch included in delivery box</p>
-                    </div>
-                  </div>
-                )}
               </div>
-
-              <p className="text-xs text-charcoal/80 mt-4 leading-relaxed font-light">
-                {product.description}
-              </p>
             </div>
 
             {/* Action Buttons */}
@@ -283,112 +196,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Specifications & Reviews Tabbed Section */}
-        <div className="mt-12 bg-white rounded-3xl p-6 sm:p-10 border border-gold/20 shadow-xs">
-          <div className="flex overflow-x-auto border-b border-gold/20 pb-2 space-x-6 text-xs uppercase font-bold tracking-wider">
-            <button
-              onClick={() => setActiveTab('desc')}
-              className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'desc' ? 'border-gold text-maroon font-bold' : 'border-transparent text-charcoal/60'
-              }`}
-            >
-              Description & Craft
-            </button>
-            <button
-              onClick={() => setActiveTab('specs')}
-              className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'specs' ? 'border-gold text-maroon font-bold' : 'border-transparent text-charcoal/60'
-              }`}
-            >
-              Technical Specs
-            </button>
-            <button
-              onClick={() => setActiveTab('care')}
-              className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'care' ? 'border-gold text-maroon font-bold' : 'border-transparent text-charcoal/60'
-              }`}
-            >
-              Jewellery Care Guide
-            </button>
-            <button
-              onClick={() => setActiveTab('shipping')}
-              className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'shipping' ? 'border-gold text-maroon font-bold' : 'border-transparent text-charcoal/60'
-              }`}
-            >
-              Shipping & Rental Returns
-            </button>
-            <button
-              onClick={() => setActiveTab('reviews')}
-              className={`pb-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === 'reviews' ? 'border-gold text-maroon font-bold' : 'border-transparent text-charcoal/60'
-              }`}
-            >
-              Reviews ({product.reviewCount})
-            </button>
-          </div>
 
-          <div className="py-6 text-xs text-charcoal/80 leading-relaxed font-light">
-            {activeTab === 'desc' && (
-              <div className="space-y-3">
-                <p>{product.description}</p>
-                <p>
-                  Handcrafted by master artisans adhering to royal South Indian jewellery traditions. Every curve, stone inlay, and gold polish layer is meticulously inspected to ensure your occasion shines brightly.
-                </p>
-              </div>
-            )}
-
-            {activeTab === 'specs' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-beige/40 p-4 rounded-xl border border-gold/15">
-                <div><strong>Material:</strong> {product.specifications.material}</div>
-                <div><strong>Plating:</strong> {product.specifications.plating}</div>
-                <div><strong>Stones:</strong> {product.specifications.stoneType}</div>
-                <div><strong>Weight:</strong> {product.specifications.weight}</div>
-                <div><strong>Dimensions:</strong> {product.specifications.dimensions}</div>
-              </div>
-            )}
-
-            {activeTab === 'care' && (
-              <div className="space-y-2">
-                <p>• {product.specifications.careInstructions}</p>
-                <p>• Avoid direct contact with perfume, hairsprays, and sanitizers.</p>
-                <p>• Clean with a soft dry cotton cloth after wearing and store in CHARMIKA velvet casing.</p>
-              </div>
-            )}
-
-            {activeTab === 'shipping' && (
-              <div className="space-y-3">
-                <p className="font-semibold text-maroon">Domestic Express Shipping:</p>
-                <p>• Ships within 24 hours from Kottayam, Kerala. Delivery within 2-4 business days nationwide.</p>
-                <p className="font-semibold text-maroon mt-3">Rental Return Procedure:</p>
-                <p>• Place the jewellery back into the provided velvet safety case on the final rental date. Affix the prepaid return shipping label included in your box. Pickup will be initiated automatically by courier.</p>
-              </div>
-            )}
-
-            {activeTab === 'reviews' && (
-              <div className="space-y-4">
-                {product.reviewsList && product.reviewsList.length > 0 ? (
-                  product.reviewsList.map((rev) => (
-                    <div key={rev.id} className="p-4 bg-beige/40 rounded-xl border border-gold/15 space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-serif font-bold text-maroon">{rev.author}</span>
-                        <span className="text-[10px] text-charcoal/50">{rev.date}</span>
-                      </div>
-                      <div className="flex text-amber-400">
-                        {[...Array(rev.rating)].map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                        ))}
-                      </div>
-                      <p className="text-xs italic">{rev.comment}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p>Be the first customer to write a review for this royal piece!</p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (

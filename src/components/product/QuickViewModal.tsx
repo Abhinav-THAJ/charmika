@@ -72,30 +72,12 @@ export const QuickViewModal: React.FC = () => {
           <div className="p-6 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 text-xs text-gold font-semibold uppercase tracking-wider mb-1">
-                <span>{quickViewProduct.jewelleryType}</span>
-                <span>•</span>
                 <span>{quickViewProduct.category}</span>
               </div>
 
               <h2 className="font-serif text-xl font-bold text-maroon">{quickViewProduct.name}</h2>
 
-              {/* Rating */}
-              <div className="flex items-center gap-1 mt-2 text-xs text-amber-500 font-semibold">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3.5 h-3.5 ${
-                        i < Math.floor(quickViewProduct.rating)
-                          ? 'fill-amber-400 text-amber-400'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-                <span>{quickViewProduct.rating}</span>
-                <span className="text-charcoal/50">({quickViewProduct.reviewCount} reviews)</span>
-              </div>
+
 
               {/* Pricing Tabs (Buy vs Rent) */}
               <div className="mt-4 p-3 bg-beige/60 rounded-xl border border-gold/20">
@@ -121,14 +103,25 @@ export const QuickViewModal: React.FC = () => {
                 </div>
 
                 {selectedMode === 'buy' ? (
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-serif font-bold text-2xl text-maroon">
-                      ₹{quickViewProduct.price.toLocaleString('en-IN')}
-                    </span>
-                    {quickViewProduct.regularPrice > quickViewProduct.price && (
-                      <span className="text-xs text-charcoal/40 line-through">
-                        ₹{quickViewProduct.regularPrice.toLocaleString('en-IN')}
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-serif font-bold text-2xl text-maroon">
+                        ₹{quickViewProduct.price.toLocaleString('en-IN')}
                       </span>
+                      {quickViewProduct.regularPrice > quickViewProduct.price && (
+                        <span className="text-xs text-charcoal/40 line-through">
+                          ₹{quickViewProduct.regularPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                    </div>
+                    {quickViewProduct.stockStatus === 'outofstock' ? (
+                      <p className="text-[11px] text-rose-600 font-bold mt-1 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-600" /> Out of Stock
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-emerald-700 font-bold mt-1 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> In Stock • Ready to ship
+                      </p>
                     )}
                   </div>
                 ) : (
@@ -170,32 +163,32 @@ export const QuickViewModal: React.FC = () => {
                 )}
               </div>
 
-              {/* Short Description */}
-              <p className="text-xs text-charcoal/80 mt-4 leading-relaxed font-light">
-                {quickViewProduct.shortDescription}
-              </p>
 
-              <div className="mt-3 space-y-1 text-[11px] text-charcoal/70">
-                <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-gold" />
-                  <span>Material: {quickViewProduct.specifications.material}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-gold" />
-                  <span>Quality Guarantee & Free Velvet Pouch Box</span>
-                </div>
-              </div>
             </div>
 
             {/* Bottom Actions */}
             <div className="mt-6 pt-4 border-t border-gold/20 flex gap-3">
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                {selectedMode === 'rent' ? `Rent for ${rentalDays} Days` : 'Add to Shopping Cart'}
-              </button>
+              {selectedMode === 'rent' ? (
+                <a
+                  href={`https://wa.me/919400976257?text=${encodeURIComponent(
+                    `Hello CHARMIKA By Lekshmi, I want to rent "${quickViewProduct.name}" for ${rentalDays} days. Please share booking availability.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md text-center"
+                >
+                  <Clock className="w-4 h-4" />
+                  Rent Now on WhatsApp ({rentalDays} Days)
+                </a>
+              ) : (
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  Add to Shopping Cart
+                </button>
+              )}
 
               <button
                 onClick={() => toggleWishlist(quickViewProduct)}

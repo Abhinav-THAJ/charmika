@@ -44,6 +44,15 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
 
         {/* Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
+          {product.stockStatus === 'outofstock' ? (
+            <span className="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
+              Out of Stock
+            </span>
+          ) : (
+            <span className="bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> In Stock
+            </span>
+          )}
           {product.onSale && (
             <span className="bg-maroon text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
               Sale
@@ -82,27 +91,22 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
 
         {/* Hover slide-up: Rent Now */}
         <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <Link
-            href={`/rental?product=${product.slug}`}
-            className="w-full py-2 bg-gold text-maroon text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md hover:bg-white"
+          <a
+            href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-2 bg-gold text-maroon text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md hover:bg-white text-center"
           >
             <Clock className="w-3.5 h-3.5" />
             Rent Now — ₹{rentalPrice}/day
-          </Link>
+          </a>
         </div>
       </div>
 
       {/* Info */}
       <div className="p-4 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <div className="flex justify-between items-center text-[11px] text-charcoal/60 mb-1">
-            <span className="uppercase tracking-wider font-medium text-gold">{product.jewelleryType}</span>
-            <div className="flex items-center gap-0.5 text-amber-500 font-semibold">
-              <Star className="w-3 h-3 fill-amber-400" />
-              <span>{product.rating}</span>
-              <span className="text-charcoal/40 text-[9px]">({product.reviewCount})</span>
-            </div>
-          </div>
+
 
           <Link href={`/product/${product.slug}`}>
             <h3 className="font-serif text-sm font-semibold text-maroon hover:text-gold transition-colors line-clamp-1">
@@ -161,14 +165,16 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
               {addedToCart ? 'Added!' : 'Add to Cart'}
             </button>
 
-            {/* Rent Now */}
-            <Link
-              href={`/rental?product=${product.slug}`}
+            {/* Rent Now -> Direct to WhatsApp */}
+            <a
+              href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-1 py-2 bg-maroon hover:bg-gold hover:text-maroon text-white text-[11px] font-bold rounded-lg transition-all flex items-center justify-center gap-1 text-center"
             >
               <Clock className="w-3 h-3" />
               Rent Now
-            </Link>
+            </a>
           </div>
         </div>
       </div>

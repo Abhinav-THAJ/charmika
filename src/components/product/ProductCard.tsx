@@ -34,6 +34,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
+          {product.stockStatus === 'outofstock' ? (
+            <span className="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
+              Out of Stock
+            </span>
+          ) : (
+            <span className="bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> In Stock
+            </span>
+          )}
           {product.onSale && (
             <span className="bg-maroon text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
               Sale
@@ -82,14 +91,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Info Container */}
       <div className="p-4 flex-1 flex flex-col justify-between bg-white">
         <div>
-          <div className="flex justify-between items-center text-[11px] text-charcoal/60 mb-1">
-            <span className="uppercase tracking-wider font-medium text-gold">{product.jewelleryType}</span>
-            <div className="flex items-center gap-0.5 text-amber-500 font-semibold">
-              <Star className="w-3 h-3 fill-amber-400" />
-              <span>{product.rating}</span>
-              <span className="text-charcoal/40 text-[9px]">({product.reviewCount})</span>
-            </div>
-          </div>
+
 
           <Link href={`/product/${product.slug}`}>
             <h3 className="font-serif text-sm font-semibold text-maroon hover:text-gold transition-colors line-clamp-1">

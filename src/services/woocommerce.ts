@@ -237,7 +237,7 @@ export const MOCK_PRODUCTS: Product[] = [
     salePrice: 2499,
     onSale: true,
     isNew: true,
-    stockStatus: 'instock',
+    stockStatus: 'outofstock',
     rating: 4.7,
     reviewCount: 19,
     category: 'Anti Tarnish Jewellery',

@@ -62,17 +62,15 @@ export const Navbar: React.FC = () => {
   const isActive = (href: string) => pathname === href;
 
   const navLinkClass = (href: string, extra = '') =>
-    `relative flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium transition-colors duration-200 py-1 ${extra} ${
-      isActive(href) ? 'text-maroon font-bold' : 'text-charcoal hover:text-maroon'
+    `relative flex items-center gap-1 text-[11px] uppercase tracking-wider font-bold transition-colors duration-200 py-1 ${extra} ${
+      isActive(href) ? 'text-maroon font-black' : 'text-maroon-950 hover:text-gold'
     }`;
 
   return (
     <>
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/97 backdrop-blur-md shadow-luxury py-2 border-b border-gold/20'
-            : 'bg-beige/80 backdrop-blur-sm py-3 border-b border-gold/10'
+        className={`sticky top-0 z-40 transition-all duration-300 bg-white shadow-luxury border-b border-gold/30 ${
+          isScrolled ? 'py-2' : 'py-3'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,7 +78,7 @@ export const Navbar: React.FC = () => {
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-maroon hover:text-gold transition-colors"
+              className="lg:hidden p-2 text-maroon hover:text-gold transition-colors bg-gold/10 rounded-full"
               aria-label="Toggle Navigation Menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -88,33 +86,33 @@ export const Navbar: React.FC = () => {
 
             {/* Brand Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gold/60 shadow-md group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(200,155,60,0.4)] transition-all duration-300">
+              <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-gold shadow-md group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(200,155,60,0.5)] transition-all duration-300">
                 <Image src="/images/logo.jpg" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-xl lg:text-2xl font-bold tracking-wider text-maroon group-hover:text-gold transition-colors leading-tight">
+                <span className="font-serif text-xl sm:text-2xl font-black tracking-wider text-maroon group-hover:text-gold transition-colors leading-tight">
                   CHARMIKA
                 </span>
-                <span className="text-[9px] sm:text-[10px] tracking-[0.25em] font-sans font-medium text-gold uppercase">
+                <span className="text-[10px] tracking-[0.25em] font-sans font-bold text-gold-600 uppercase">
                   By Lekshmi
                 </span>
               </div>
             </Link>
 
             {/* Action Buttons */}
-            <div className="flex items-center space-x-3 sm:space-x-5">
+            <div className="flex items-center space-x-3 sm:space-x-4">
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-charcoal hover:text-gold transition-colors"
+                className="p-2.5 text-maroon hover:text-gold bg-gold/10 hover:bg-gold/20 rounded-full transition-all"
                 title="Search Jewellery"
               >
                 <Search className="w-5 h-5" />
               </button>
 
-              <Link href="/wishlist" className="p-2 text-charcoal hover:text-gold transition-colors relative" title="View Wishlist">
+              <Link href="/wishlist" className="p-2.5 text-maroon hover:text-gold bg-gold/10 hover:bg-gold/20 rounded-full transition-all relative" title="View Wishlist">
                 <Heart className="w-5 h-5" />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gold text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                  <span className="absolute -top-1 -right-1 bg-gold text-maroon-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white shadow-sm animate-bounce">
                     {wishlistCount}
                   </span>
                 )}
@@ -122,12 +120,12 @@ export const Navbar: React.FC = () => {
 
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="p-2 text-charcoal hover:text-gold transition-colors relative"
+                className="p-2.5 text-maroon hover:text-gold bg-gold/10 hover:bg-gold/20 rounded-full transition-all relative"
                 title="Shopping Cart"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {totalItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-maroon text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-maroon text-white text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white shadow-sm">
                     {totalItemsCount}
                   </span>
                 )}
@@ -136,10 +134,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* ─── Desktop Mega Nav Bar ─────────────────────────────────── */}
-          <nav className="hidden lg:flex items-center justify-center gap-1 pt-3 mt-2 border-t border-gold/10">
+          <nav className="hidden lg:flex items-center justify-center gap-2 pt-3 mt-2 border-t border-gold/20">
 
             {/* HOME */}
-            <Link href="/" className={navLinkClass('/', 'px-3 py-2')}>
+            <Link href="/" className={navLinkClass('/', 'px-3 py-2 text-xs font-bold text-maroon-950 hover:text-gold uppercase tracking-wider')}>
               Home
               {isActive('/') && <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-gold rounded-full" />}
             </Link>
@@ -280,64 +278,34 @@ export const Navbar: React.FC = () => {
               </button>
               {activeMenu === 'rental' && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[340px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
                   onMouseEnter={stayOpen}
                   onMouseLeave={closeMenu}
                 >
-                  <div className="grid grid-cols-2">
-                    <div className="p-5">
-                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Rent by Occasion</p>
-                      <div className="flex flex-col gap-1.5">
-                        {[
-                          { href: '/rental?filter=bridal', label: '👰 Bridal Sets', desc: 'Full bridal jewellery' },
-                          { href: '/rental?filter=engagement', label: '💍 Engagement', desc: 'Ring ceremony pieces' },
-                          { href: '/rental?filter=reception', label: '🌸 Reception', desc: 'Elegant reception sets' },
-                          { href: '/rental?filter=function', label: '🎉 Function Wear', desc: 'Family events & parties' },
-                          { href: '/rental?filter=photoshoot', label: '📸 Photo Shoots', desc: 'Professional shoots' },
-                          { href: '/rental', label: '✨ All Rental Pieces', desc: 'View complete catalogue' },
-                        ].map(({ href, label, desc }) => (
-                          <Link
-                            key={href}
-                            href={href}
-                            onClick={() => setActiveMenu(null)}
-                            className="group/r flex items-center justify-between p-2.5 rounded-xl hover:bg-gold/10 border border-transparent hover:border-gold/20 transition-all"
-                          >
-                            <div>
-                              <p className="text-xs font-semibold text-maroon group-hover/r:text-gold transition-colors">{label}</p>
-                              <p className="text-[10px] text-charcoal/50">{desc}</p>
-                            </div>
-                            <span className="text-[10px] text-gold font-bold opacity-0 group-hover/r:opacity-100 transition-opacity">→</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="bg-maroon p-5 flex flex-col justify-between">
-                      <div>
-                        <p className="text-gold font-serif text-base font-bold mb-2">Why Rent?</p>
-                        <div className="space-y-3">
-                          {[
-                            { icon: '💰', title: 'Save Up to 90%', sub: 'Fraction of purchase cost' },
-                            { icon: '🌟', title: 'Premium Quality', sub: 'Grand bridal sets' },
-                            { icon: '🚚', title: 'Door Delivery', sub: 'Kottayam & nearby' },
-                            { icon: '🧹', title: 'Sanitized', sub: 'Cleaned before dispatch' },
-                          ].map(({ icon, title, sub }) => (
-                            <div key={title} className="flex items-start gap-2.5">
-                              <span className="text-lg">{icon}</span>
-                              <div>
-                                <p className="text-white text-xs font-semibold">{title}</p>
-                                <p className="text-white/60 text-[10px]">{sub}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <Link
-                        href="/rental"
-                        onClick={() => setActiveMenu(null)}
-                        className="mt-4 block text-center text-[11px] font-bold py-2.5 rounded-xl bg-gold text-maroon hover:bg-white transition-colors"
-                      >
-                        Explore Rentals →
-                      </Link>
+                  <div className="p-5">
+                    <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Rent by Occasion</p>
+                    <div className="flex flex-col gap-1.5">
+                      {[
+                        { href: '/rental?filter=bridal', label: '👰 Bridal Sets', desc: 'Full bridal jewellery' },
+                        { href: '/rental?filter=engagement', label: '💍 Engagement', desc: 'Ring ceremony pieces' },
+                        { href: '/rental?filter=reception', label: '🌸 Reception', desc: 'Elegant reception sets' },
+                        { href: '/rental?filter=function', label: '🎉 Function Wear', desc: 'Family events & parties' },
+                        { href: '/rental?filter=photoshoot', label: '📸 Photo Shoots', desc: 'Professional shoots' },
+                        { href: '/rental', label: '✨ All Rental Pieces', desc: 'View complete catalogue' },
+                      ].map(({ href, label, desc }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setActiveMenu(null)}
+                          className="group/r flex items-center justify-between p-2.5 rounded-xl hover:bg-gold/10 border border-transparent hover:border-gold/20 transition-all"
+                        >
+                          <div>
+                            <p className="text-xs font-semibold text-maroon group-hover/r:text-gold transition-colors">{label}</p>
+                            <p className="text-[10px] text-charcoal/50">{desc}</p>
+                          </div>
+                          <span className="text-[10px] text-gold font-bold opacity-0 group-hover/r:opacity-100 transition-opacity">→</span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </div>

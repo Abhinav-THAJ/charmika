@@ -2,34 +2,31 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Clock, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Clock } from 'lucide-react';
 
-const SLIDES = [
+const SLIDES: Array<{
+  id: number;
+  title: string;
+  subtitle: string;
+  image: string;
+  ctaPrimary: { text: string; href: string };
+  ctaSecondary?: { text: string; href: string };
+  badge: string;
+}> = [
   {
     id: 1,
     title: 'Timeless Elegance That Tells Your Story',
     subtitle: 'Discover hand-crafted Temple Nakshi Haarams, Grand Chokers & Royal Bridal Collections.',
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1600&auto=format&fit=crop',
     ctaPrimary: { text: 'Shop Collection', href: '/shop' },
-    ctaSecondary: { text: 'Rent Bridal Jewellery', href: '/rental' },
     badge: 'Signature Heritage Collection 2026',
   },
   {
-    id: 2,
-    title: 'Rent Royal Jewellery For Special Days',
-    subtitle: 'Explore gold plated & Kundan masterpieces crafted for weddings, grand events & defining celebrations.',
-    image: 'https://images.unsplash.com/photo-1611591475281-b3ed997a61d1?q=80&w=1600&auto=format&fit=crop',
-    ctaPrimary: { text: 'Explore Rental Booking', href: '/rental' },
-    ctaSecondary: { text: 'View Combos', href: '/combos' },
-    badge: 'Popular Rental Jewellery Service',
-  },
-  {
     id: 3,
-    title: 'Luminous AD Stone & Anti Tarnish Pieces',
-    subtitle: 'Waterproof everyday luxury designed for modern grace.',
+    title: 'Your Daily Sparkle',
+    subtitle: 'Lightweight, anti-tarnish, and perfect for everyday styling',
     image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1600&auto=format&fit=crop',
     ctaPrimary: { text: 'Shop AD Stone Collection', href: '/shop?category=ad-stone-jewellery' },
-    ctaSecondary: { text: 'View Festival Offers', href: '/offers' },
     badge: 'Everyday Luxury Essentials',
   },
 ];
@@ -90,20 +87,17 @@ export const HeroSlider: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </Link>
 
-            <Link
-              href={slide.ctaSecondary.href}
-              className="px-6 py-3.5 border border-gold/50 bg-white/10 hover:bg-gold/20 text-white font-medium text-xs uppercase tracking-widest rounded-full backdrop-blur-xs transition-all flex items-center gap-2"
-            >
-              <Clock className="w-4 h-4 text-gold" />
-              {slide.ctaSecondary.text}
-            </Link>
+            {slide.ctaSecondary && (
+              <Link
+                href={slide.ctaSecondary.href}
+                className="px-6 py-3.5 border border-gold/50 bg-white/10 hover:bg-gold/20 text-white font-medium text-xs uppercase tracking-widest rounded-full backdrop-blur-xs transition-all flex items-center gap-2"
+              >
+                <Clock className="w-4 h-4 text-gold" />
+                {slide.ctaSecondary.text}
+              </Link>
+            )}
           </div>
 
-          <div className="pt-6 flex items-center space-x-6 text-xs text-white/70">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-gold" /> Handcrafted Quality
-            </span>
-          </div>
         </div>
       </div>
 
