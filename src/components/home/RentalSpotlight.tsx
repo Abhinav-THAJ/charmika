@@ -22,7 +22,7 @@ export const RentalSpotlight: React.FC = () => {
             </h2>
 
             <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed">
-              Why buy expensive heavy bridal sets for a one-day function? At <strong className="text-gold">CHARMIKA By Lekshmi</strong>, you can rent grand Temple Nakshi haarams, Kundan combos & AD chokers starting from just <span className="text-gold font-bold">₹299/day</span>.
+              From daily wear to special celebrations, <strong className="text-gold">CHARMIKA By Lekshmi</strong> brings you premium anti-tarnish jewellery that shines longer, feels lighter, and adds elegance to every outfit.
             </p>
 
             <ul className="space-y-2.5 text-xs text-white/90 font-medium">
