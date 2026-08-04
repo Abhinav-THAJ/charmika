@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Clock, ShieldCheck, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Clock, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
 import { MOCK_PRODUCTS } from '@/services/woocommerce';
 import { RentalProductCard } from '@/components/product/RentalProductCard';
 
@@ -25,17 +25,6 @@ export const RentalSpotlight: React.FC = () => {
               From daily wear to special celebrations, <strong className="text-gold">CHARMIKA By Lekshmi</strong> brings you premium anti-tarnish jewellery that shines longer, feels lighter, and adds elegance to every outfit.
             </p>
 
-            <ul className="space-y-2.5 text-xs text-white/90 font-medium">
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-gold" /> Flexible 3, 5, or 7-day rental slots
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-gold" /> 100% Sanitized & Premium Box packaging
-              </li>
-              <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-gold" /> Instant refundable security deposit payout
-              </li>
-            </ul>
 
             <div className="pt-2">
               <Link
