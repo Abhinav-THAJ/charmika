@@ -27,7 +27,7 @@ export const BackToTop: React.FC = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed bottom-24 right-6 z-40 p-3 bg-maroon text-gold hover:bg-gold hover:text-maroon rounded-full shadow-luxury transition-all duration-300 border border-gold/40"
+      className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-40 p-2.5 sm:p-3 bg-maroon text-gold hover:bg-gold hover:text-maroon rounded-full shadow-luxury transition-all duration-300 border border-gold/40"
       title="Back to Top"
     >
       <ArrowUp className="w-5 h-5" />

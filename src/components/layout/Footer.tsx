@@ -8,7 +8,7 @@ import { Gem, MapPin, Phone, Mail, Instagram, Facebook, ShieldCheck, Award, Refr
 export const Footer: React.FC = () => {
 
   return (
-    <footer className="bg-maroon-950 text-white pt-16 pb-8 border-t-2 border-gold/40 relative overflow-hidden">
+    <footer className="bg-maroon-950 text-white pt-16 pb-28 sm:pb-12 border-t-2 border-gold/40 relative overflow-hidden">
       {/* Subtle Gold Background Accent */}
       <div className="absolute inset-0 bg-luxury-radial pointer-events-none opacity-30" />
 
@@ -174,16 +174,20 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom copyright & legal */}
-        <div className="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-white/50 space-y-3 sm:space-y-0">
+        <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-white/60 space-y-4 md:space-y-0 text-center md:text-left">
           <p>© {new Date().getFullYear()} CHARMIKA By Lekshmi (Charmika Jewels). All Rights Reserved.</p>
-          <div className="flex space-x-4">
-            <span className="hover:text-gold cursor-pointer">Privacy Policy</span>
-            <span>•</span>
-            <span className="hover:text-gold cursor-pointer">Terms & Conditions</span>
-            <span>•</span>
-            <span className="hover:text-gold cursor-pointer">Rental Policy</span>
-            <span>•</span>
-            <Link href="/return-policy" className="hover:text-gold transition-colors">Return Policy</Link>
+          <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs">
+            <span className="hover:text-gold cursor-pointer transition-colors">Privacy Policy</span>
+            <span className="text-white/30">•</span>
+            <span className="hover:text-gold cursor-pointer transition-colors">Terms & Conditions</span>
+            <span className="text-white/30">•</span>
+            <Link href="/rental" className="hover:text-gold transition-colors text-gold font-semibold">
+              Rental Policy
+            </Link>
+            <span className="text-white/30">•</span>
+            <Link href="/return-policy" className="hover:text-gold transition-colors text-gold font-semibold">
+              Return Policy
+            </Link>
           </div>
         </div>
       </div>

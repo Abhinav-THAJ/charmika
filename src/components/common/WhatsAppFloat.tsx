@@ -26,7 +26,7 @@ export const WhatsAppFloat: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
       {/* Quick Menu Popup */}
       {isOpen && (
         <div className="mb-3 w-72 bg-white rounded-3xl shadow-luxury border border-gold/30 p-4 space-y-3 animate-slide-up text-charcoal">
@@ -69,7 +69,7 @@ export const WhatsAppFloat: React.FC = () => {
       {/* Compact Circular Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center group border-2 border-white/40"
+        className="p-2.5 sm:p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center group border-2 border-white/40"
         title="Chat with Charmika Jewels on WhatsApp"
       >
         <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
