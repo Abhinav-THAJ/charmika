@@ -42,7 +42,7 @@ export const RentalSpotlight: React.FC = () => {
                 href="/rental"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gold text-maroon-950 font-bold text-xs uppercase tracking-widest rounded-full hover:bg-white transition-all shadow-luxury"
               >
-                Browse All Rental Jewellery
+                Shop collection
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
