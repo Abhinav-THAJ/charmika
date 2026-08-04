@@ -51,7 +51,7 @@ export default function RentalPage() {
               2
             </div>
             <h3 className="font-serif text-base font-bold text-maroon">Receive & Flaunt</h3>
-            <p className="text-xs text-charcoal/70 mt-1">Receive fully sanitized jewellery in our velvet safety box 1 day prior to your event.</p>
+            <p className="text-xs text-charcoal/70 mt-1">Receive fully sanitized jewellery in our premium safety box 1 day prior to your event.</p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-xs text-center">

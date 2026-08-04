@@ -6,7 +6,7 @@ import { Gem, Award, ShieldCheck, Heart, Sparkles, Clock, Truck, MessageSquare, 
 
 export default function AboutPage() {
   const stats = [
-    { label: 'Happy Brides & Clients', value: '5,000+' },
+    { label: 'Happy Brides & Clients', value: '100+' },
     { label: 'Curated Heritage Designs', value: '500+' },
     { label: 'Anti-Tarnish Lifetime Finish', value: '100%' },
     { label: 'Insured Doorstep Delivery', value: 'Pan-India' },
@@ -30,8 +30,8 @@ export default function AboutPage() {
     },
     {
       icon: Truck,
-      title: 'Velvet Packaging & Easy Returns',
-      desc: 'All rentals and purchases arrive in protective velvet cases with prepaid pickup labels for seamless 3-day or 5-day rental returns.',
+      title: 'Premium Packaging & Easy Returns',
+      desc: 'All rentals and purchases arrive in protective safety cases with prepaid pickup labels for seamless 3-day or 5-day rental returns.',
     },
   ];
 

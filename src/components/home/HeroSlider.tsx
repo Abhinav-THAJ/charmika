@@ -16,7 +16,7 @@ const SLIDES: Array<{
   {
     id: 1,
     title: 'Timeless Elegance That Tells Your Story',
-    subtitle: 'Discover hand-crafted Temple Nakshi Haarams, Grand Chokers & Royal Bridal Collections.',
+    subtitle: 'Discover hand-crafted Temple Haarams, Grand Chokers & Royal Bridal Collections.',
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=1600&auto=format&fit=crop',
     ctaPrimary: { text: 'Shop Collection', href: '/shop' },
     badge: 'Signature Heritage Collection 2026',
@@ -26,7 +26,7 @@ const SLIDES: Array<{
     title: 'Your Daily Sparkle',
     subtitle: 'Lightweight, anti-tarnish, and perfect for everyday styling',
     image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1600&auto=format&fit=crop',
-    ctaPrimary: { text: 'Shop AD Stone Collection', href: '/shop?category=ad-stone-jewellery' },
+    ctaPrimary: { text: 'Shop Collections', href: '/shop?category=ad-stone-jewellery' },
     badge: 'Everyday Luxury Essentials',
   },
 ];

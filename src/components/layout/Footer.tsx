@@ -155,11 +155,6 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=temple-jewellery" className="hover:text-gold transition-colors">
-                  Temple Nakshi Work
-                </Link>
-              </li>
-              <li>
                 <Link href="/shop?category=ad-stone-jewellery" className="hover:text-gold transition-colors">
                   AD Stone Jewellery
                 </Link>

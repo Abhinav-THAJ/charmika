@@ -24,7 +24,7 @@ export const CartDrawer: React.FC = () => {
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
 
-  const freeShippingThreshold = 3000;
+  const freeShippingThreshold = 1500;
   const progressToFreeShipping = Math.min(100, (subtotal / freeShippingThreshold) * 100);
   const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
 
@@ -74,7 +74,7 @@ export const CartDrawer: React.FC = () => {
             {subtotal >= freeShippingThreshold ? (
               <p className="flex items-center gap-2 text-gold font-medium">
                 <Truck className="w-4 h-4" />
-                Congratulations! You qualified for FREE Express Shipping!
+                Free shipping on orders above ₹1,500!
               </p>
             ) : (
               <div>

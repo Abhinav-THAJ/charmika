@@ -15,10 +15,7 @@ export const RentalSpotlight: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
           {/* Info Column */}
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold/20 rounded-full text-gold text-xs font-semibold uppercase tracking-wider border border-gold/40">
-              <Clock className="w-3.5 h-3.5" />
-              Special Rental Service
-            </div>
+
 
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">
               Wear Anti-Tarnish Luxury For Your Special Event
@@ -33,7 +30,7 @@ export const RentalSpotlight: React.FC = () => {
                 <CheckCircle2 className="w-4 h-4 text-gold" /> Flexible 3, 5, or 7-day rental slots
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-gold" /> 100% Sanitized & Velvet Box packaging
+                <CheckCircle2 className="w-4 h-4 text-gold" /> 100% Sanitized & Premium Box packaging
               </li>
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-gold" /> Instant refundable security deposit payout

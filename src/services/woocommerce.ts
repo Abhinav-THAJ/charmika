@@ -135,7 +135,7 @@ export const MOCK_PRODUCTS: Product[] = [
       stoneType: 'Synthetic Rubies, Emeralds & South Sea Pearls',
       weight: '145 grams',
       dimensions: 'Necklace Length: 28 inches (Adjustable dori)',
-      careInstructions: 'Keep away from moisture, direct perfume spray, and store in airtight velvet pouch.',
+      careInstructions: 'Keep away from moisture, direct perfume spray, and store in an airtight pouch.',
     },
     reviewsList: [
       {
@@ -286,7 +286,7 @@ export const MOCK_PRODUCTS: Product[] = [
       stoneType: 'Ruby & Emerald doublet stones',
       weight: '160 grams',
       dimensions: 'Adjustable length 26" - 42"',
-      careInstructions: 'Store flat in padded velvet box.',
+      careInstructions: 'Store flat in a padded box.',
     },
   },
   {
@@ -319,7 +319,7 @@ export const MOCK_PRODUCTS: Product[] = [
       stoneType: 'Hand-set AAA CZ & Hydro Emeralds',
       weight: '42 grams pair',
       dimensions: 'Length: 3.5 inches',
-      careInstructions: 'Keep in dry velvet case.',
+      careInstructions: 'Keep in a dry case.',
     },
   },
   {

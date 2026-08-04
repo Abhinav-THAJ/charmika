@@ -151,7 +151,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     : 0;
 
   const taxAmount = 0; // Inclusive for luxury jewellery
-  const shippingAmount = subtotal > 3000 || subtotal === 0 ? 0 : 250;
+  const shippingAmount = subtotal >= 1500 || subtotal === 0 ? 0 : 250;
   const totalAmount = Math.max(0, subtotal - discountAmount + shippingAmount);
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 

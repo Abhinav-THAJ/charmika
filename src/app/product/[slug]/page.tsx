@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { WooCommerceService } from '@/services/woocommerce';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { ProductCard } from '@/components/product/ProductCard';
+import { YouMayAlsoLike } from '@/components/product/YouMayAlsoLike';
 import {
   Star,
   ShoppingBag,
@@ -19,6 +21,7 @@ import {
   Share2,
   ChevronRight,
   MessageSquare,
+  Zap,
 } from 'lucide-react';
 
 interface PageProps {
@@ -27,6 +30,7 @@ interface PageProps {
 
 export default function ProductDetailPage({ params }: PageProps) {
   const { slug } = use(params);
+  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +50,17 @@ export default function ProductDetailPage({ params }: PageProps) {
       setProduct(data);
       if (data) {
         const related = await WooCommerceService.getProducts({ category: data.categorySlug });
-        setRelatedProducts(related.filter((p) => p.id !== data.id).slice(0, 4));
+        let filteredRelated = related.filter((p) => p.id !== data.id);
+        
+        // Ensure we have at least 6 products for a rich horizontal scroll
+        if (filteredRelated.length < 6) {
+          const allProducts = await WooCommerceService.getProducts();
+          const extra = allProducts.filter(
+            (p) => p.id !== data.id && !filteredRelated.some((r) => r.id === p.id)
+          );
+          filteredRelated = [...filteredRelated, ...extra];
+        }
+        setRelatedProducts(filteredRelated);
       }
       setLoading(false);
     }
@@ -80,6 +94,11 @@ export default function ProductDetailPage({ params }: PageProps) {
     } else {
       addToCart(product, false);
     }
+  };
+
+  const handleBuyNow = () => {
+    handleAddToCart();
+    router.push('/cart');
   };
 
   return (
@@ -165,7 +184,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                     </p>
                   ) : (
                     <p className="text-[11px] text-emerald-700 font-bold mt-1 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> In Stock • Ready for express shipping
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> In Stock • Ready for shipping
                     </p>
                   )}
                 </div>
@@ -182,32 +201,25 @@ export default function ProductDetailPage({ params }: PageProps) {
                 {selectedMode === 'rent' ? `Book Rental for ${rentalDays} Days` : 'Add to Shopping Cart'}
               </button>
 
-              <a
-                href={`https://wa.me/919400976257?text=${encodeURIComponent(
-                  `Hello CHARMIKA By Lekshmi! I am interested in inquiring about "${product.name}" (SKU: ${product.sku}). Is it available for purchase or rental?`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-full transition-all flex items-center justify-center gap-2 shadow-md"
+              <button
+                onClick={handleBuyNow}
+                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-full transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4" /> Inquire About This Piece On WhatsApp
-              </a>
+                <Zap className="w-4 h-4 fill-white" /> Buy Now
+              </button>
             </div>
           </div>
         </div>
 
 
 
-        {/* Related Products */}
+        {/* Products You May Like Horizontal Scroll Section */}
         {relatedProducts.length > 0 && (
-          <div className="mt-16">
-            <h2 className="font-serif text-2xl font-bold text-maroon mb-6">Complete Your Look</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
+          <YouMayAlsoLike
+            products={relatedProducts}
+            title="Products You May Like"
+            subtitle="Explore complementary luxury designs from our exclusive collection"
+          />
         )}
       </div>
     </div>

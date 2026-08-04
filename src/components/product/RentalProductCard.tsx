@@ -16,15 +16,7 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { openQuickView } = useQuickView();
-  const [addedToCart, setAddedToCart] = useState(false);
-
   const isWishlisted = isInWishlist(product.id);
-
-  const handleAddToCart = () => {
-    addToCart(product, false);
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000);
-  };
 
   const rentalPrice = product.rentalPricePerDay ?? Math.round(product.price * 0.05);
   const deposit = product.securityDeposit ?? Math.round(product.price * 0.3);
@@ -150,30 +142,16 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
             </Link>
           </div>
 
-          {/* Action buttons */}
-          <div className="flex gap-2">
-            {/* Add to Cart */}
-            <button
-              onClick={handleAddToCart}
-              className={`flex-1 py-2 border rounded-lg text-[11px] font-semibold transition-all flex items-center justify-center gap-1 ${
-                addedToCart
-                  ? 'bg-green-50 border-green-300 text-green-700'
-                  : 'bg-beige border-gold/40 hover:bg-gold hover:border-gold text-maroon'
-              }`}
-            >
-              <ShoppingBag className="w-3 h-3" />
-              {addedToCart ? 'Added!' : 'Add to Cart'}
-            </button>
-
-            {/* Rent Now -> Direct to WhatsApp */}
+          {/* Action button - Rent Now */}
+          <div>
             <a
               href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 py-2 bg-maroon hover:bg-gold hover:text-maroon text-white text-[11px] font-bold rounded-lg transition-all flex items-center justify-center gap-1 text-center"
+              className="w-full py-2.5 bg-maroon hover:bg-gold hover:text-maroon text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-center shadow-xs"
             >
-              <Clock className="w-3 h-3" />
-              Rent Now
+              <Clock className="w-4 h-4" />
+              Rent Now — ₹{rentalPrice}/day
             </a>
           </div>
         </div>

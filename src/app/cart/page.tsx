@@ -23,7 +23,7 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const freeShippingThreshold = 3000;
+  const freeShippingThreshold = 1500;
   const progressToFreeShipping = Math.min(100, (subtotal / freeShippingThreshold) * 100);
   const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
 
@@ -91,14 +91,14 @@ export default function CartPage() {
           {subtotal >= freeShippingThreshold ? (
             <p className="flex items-center gap-2 text-gold text-xs sm:text-sm font-bold">
               <Truck className="w-5 h-5 text-gold shrink-0" />
-              🎉 Congratulations! You have unlocked FREE Express Insured Shipping nationwide!
+              🎉 Congratulations! You have unlocked FREE Insured Shipping on orders above ₹1,500!
             </p>
           ) : (
             <div className="space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="flex items-center gap-1.5 text-white/90">
                   <Truck className="w-4 h-4 text-gold" />
-                  Add <strong className="text-gold font-bold">₹{amountNeededForFreeShipping.toLocaleString('en-IN')}</strong> more to get FREE express shipping!
+                  Add <strong className="text-gold font-bold">₹{amountNeededForFreeShipping.toLocaleString('en-IN')}</strong> more to get FREE shipping!
                 </span>
                 <span className="text-gold font-bold">{Math.round(progressToFreeShipping)}%</span>
               </div>
@@ -262,7 +262,7 @@ export default function CartPage() {
                 </div>
               )}
               <div className="flex justify-between">
-                <span>Express Insured Shipping</span>
+                <span>Insured Shipping</span>
                 <span>{shippingAmount === 0 ? 'FREE' : `₹${shippingAmount}`}</span>
               </div>
               <div className="flex justify-between font-serif text-xl font-bold text-maroon pt-3 border-t border-gold/20">
@@ -273,7 +273,7 @@ export default function CartPage() {
 
             <div className="p-3.5 bg-beige/60 rounded-2xl border border-gold/20 text-[11px] text-charcoal/80 flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-gold shrink-0" />
-              <span>100% Insured Delivery with Velvet Safety Case & Guarantee Certificate</span>
+              <span>100% Insured Delivery with Premium Safety Case & Guarantee Certificate</span>
             </div>
 
             <Link

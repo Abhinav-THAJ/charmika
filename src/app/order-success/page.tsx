@@ -27,7 +27,7 @@ export default function OrderSuccessPage() {
         </div>
 
         <div className="p-4 bg-beige/60 rounded-2xl border border-gold/20 text-xs text-charcoal/80 space-y-1 text-left">
-          <p><strong>Shipping Carrier:</strong> Express Insured Courier</p>
+          <p><strong>Shipping Carrier:</strong> Insured Courier</p>
           <p><strong>Estimated Delivery:</strong> 3 Business Days</p>
           <p><strong>Dispatch Origin:</strong> Kottayam, Kerala</p>
           <p><strong>Confirmation Email:</strong> Sent to your inbox</p>

@@ -11,7 +11,7 @@ const REVIEWS = [
     rating: 5,
     date: 'July 2026',
     comment:
-      'CHARMIKA By Lekshmi made my wedding reception unforgettable! The Temple Nakshi long haaram rental was flawless and arrived in a velvet safety casing.',
+      'CHARMIKA By Lekshmi made my wedding reception unforgettable! The Temple Nakshi long haaram rental was flawless and arrived in a premium safety casing.',
     verified: true,
   },
   {
