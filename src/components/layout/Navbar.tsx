@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
             {/* Brand Logo */}
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-gold shadow-md group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(200,155,60,0.5)] transition-all duration-300">
-                <Image src="/images/logo.jpg" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
+                <Image src="/images/logo.png" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-xl sm:text-2xl font-black tracking-wider text-maroon group-hover:text-gold transition-colors leading-tight">
@@ -456,7 +456,7 @@ export const Navbar: React.FC = () => {
               <div className="flex justify-between items-center pb-4 border-b border-gold/20">
                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2.5">
                   <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gold shadow-sm">
-                    <Image src="/images/logo.jpg" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
+                    <Image src="/images/logo.png" alt="CHARMIKA JEWELLERY" fill className="object-cover" />
                   </div>
                   <div>
                     <span className="font-serif text-lg font-bold text-maroon block leading-tight">CHARMIKA</span>

@@ -35,7 +35,7 @@ export const AuthModal: React.FC = () => {
           <div className="inline-flex items-center gap-2.5 justify-center mb-2">
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-gold shadow-sm">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="CHARMIKA JEWELLERY"
                 fill
                 className="object-cover"

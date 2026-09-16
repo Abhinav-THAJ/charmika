@@ -52,7 +52,7 @@ export const Preloader: React.FC = () => {
         {/* Logo Image */}
         <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 border-gold shadow-[0_0_35px_rgba(200,155,60,0.5)] transform animate-pulse-slow">
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.png"
             alt="CHARMIKA JEWELLERY"
             fill
             className="object-cover"

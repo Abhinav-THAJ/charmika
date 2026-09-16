@@ -38,7 +38,7 @@ export const Footer: React.FC = () => {
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gold/70 shadow-[0_0_15px_rgba(200,155,60,0.3)] group-hover:scale-105 transition-transform duration-300">
                 <Image
-                  src="/images/logo.jpg"
+                  src="/images/logo.png"
                   alt="CHARMIKA JEWELLERY"
                   fill
                   className="object-cover"
