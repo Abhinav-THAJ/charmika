@@ -11,6 +11,7 @@ import {
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
+import { Category } from '@/types';
 import { SearchOverlay } from '@/components/common/SearchOverlay';
 
 /* ─── Mega Menu Data ──────────────────────────────────────────────── */
@@ -29,7 +30,7 @@ const categoryMenu = [
 
 const megaMenus: Record<string, React.ReactNode> = {};
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
   const pathname = usePathname();
   const { totalItemsCount, setIsCartOpen } = useCart();
   const { wishlistCount } = useWishlist();
@@ -221,14 +222,14 @@ export const Navbar: React.FC = () => {
                     <div className="col-span-2 p-5">
                       <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Shop by Category</p>
                       <div className="grid grid-cols-2 gap-1.5">
-                        {categoryMenu.map((cat) => (
+                        {categories.map((cat) => (
                           <Link
-                            key={cat.name}
-                            href={cat.href}
+                            key={cat.id}
+                            href={`/shop?category=${cat.slug}`}
                             onClick={() => setActiveMenu(null)}
                             className="flex items-center gap-2.5 px-3 py-2.5 text-xs text-charcoal/90 hover:bg-gold/15 hover:text-maroon rounded-xl font-medium transition-all border border-transparent hover:border-gold/20 group/item"
                           >
-                            <span className="text-base">{cat.icon}</span>
+                            <span className="text-base">💎</span>
                             <span>{cat.name}</span>
                             <span className="ml-auto text-[10px] text-gold font-bold opacity-0 group-hover/item:opacity-100 transition-opacity">→</span>
                           </Link>
@@ -487,14 +488,14 @@ export const Navbar: React.FC = () => {
                   </button>
                   {mobileCatOpen && (
                     <div className="pl-4 pb-2 flex flex-col gap-0.5 bg-white/60 rounded-xl mt-1">
-                      {categoryMenu.map((cat) => (
+                      {categories.map((cat) => (
                         <Link
-                          key={cat.name}
-                          href={cat.href}
+                          key={cat.id}
+                          href={`/shop?category=${cat.slug}`}
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="py-2 px-3 text-xs text-charcoal hover:text-maroon flex items-center gap-2"
                         >
-                          <span>{cat.icon}</span> {cat.name}
+                          <span>💎</span> {cat.name}
                         </Link>
                       ))}
                     </div>

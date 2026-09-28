@@ -1,13 +1,13 @@
-'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { Clock, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
-import { MOCK_PRODUCTS } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { RentalProductCard } from '@/components/product/RentalProductCard';
 
-export const RentalSpotlight: React.FC = () => {
-  const rentalProducts = MOCK_PRODUCTS.filter((p) => p.isRentalAvailable).slice(0, 4);
+export const RentalSpotlight = async () => {
+  const products = await WooCommerceService.getProducts();
+  const rentalProducts = products.filter((p) => p.isRentalAvailable).slice(0, 4);
 
   return (
     <section className="py-16 bg-gradient-to-b from-maroon-950 to-maroon-900 text-white relative overflow-hidden border-y border-gold/30">

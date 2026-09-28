@@ -1,13 +1,13 @@
-'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import { Tag, Sparkles, ArrowRight } from 'lucide-react';
-import { MOCK_PRODUCTS } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { ProductCard } from '@/components/product/ProductCard';
 
-export const ComboOffersSection: React.FC = () => {
-  const comboProducts = MOCK_PRODUCTS.filter((p) => p.isCombo || p.price > 10000).slice(0, 3);
+export const ComboOffersSection = async () => {
+  const products = await WooCommerceService.getProducts();
+  const comboProducts = products.filter((p) => p.isCombo || p.price > 10000).slice(0, 3);
 
   return (
     <section className="py-16 bg-beige/60">

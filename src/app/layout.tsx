@@ -14,6 +14,7 @@ import { WishlistProvider } from '@/context/WishlistContext';
 import { AuthProvider } from '@/context/AuthContext';
 import { QuickViewProvider } from '@/context/QuickViewContext';
 import { ToastProvider } from '@/context/ToastContext';
+import { WooCommerceService } from '@/services/woocommerce';
 
 export const metadata: Metadata = {
   title: 'CHARMIKA By Lekshmi | Premium Luxury Jewellery & Rental Store',
@@ -37,7 +38,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const categories = await WooCommerceService.getCategories();
   return (
     <html lang="en">
       <body className="antialiased selection:bg-gold selection:text-maroon">
@@ -48,9 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <QuickViewProvider>
                   <div className="flex flex-col min-h-screen bg-beige">
                     <TopBanner />
-                    <Navbar />
+                    <Navbar categories={categories} />
                     <main className="flex-1">{children}</main>
-                    <Footer />
+                    <Footer categories={categories} />
 
                     {/* Drawers & Floating Action Overlays */}
                     <Preloader />

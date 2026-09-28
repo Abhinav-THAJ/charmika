@@ -1,12 +1,12 @@
-'use client';
 
 import React from 'react';
 import Link from 'next/link';
-import { MOCK_CATEGORIES } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { ArrowUpRight } from 'lucide-react';
 
-export const CategoryGrid: React.FC = () => {
-  const featuredCategories = MOCK_CATEGORIES.filter((c) => c.featured);
+export const CategoryGrid = async () => {
+  const categories = await WooCommerceService.getCategories();
+  const featuredCategories = categories.filter((c) => c.featured);
 
   return (
     <section className="py-16 bg-beige">

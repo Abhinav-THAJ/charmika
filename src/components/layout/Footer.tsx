@@ -4,8 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Gem, MapPin, Phone, Mail, Instagram, Facebook, ShieldCheck, Award, RefreshCw } from 'lucide-react';
+import { Category } from '@/types';
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
 
   return (
     <footer className="bg-maroon-950 text-white pt-16 pb-28 sm:pb-12 border-t-2 border-gold/40 relative overflow-hidden">
@@ -144,31 +145,13 @@ export const Footer: React.FC = () => {
               Categories
             </h4>
             <ul className="space-y-2 text-xs text-white/70">
-              <li>
-                <Link href="/shop?category=necklaces" className="hover:text-gold transition-colors">
-                  Necklaces & Haarams
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=chokers" className="hover:text-gold transition-colors">
-                  Chokers Set
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=ad-stone-jewellery" className="hover:text-gold transition-colors">
-                  AD Stone Jewellery
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=anti-tarnish-jewellery" className="hover:text-gold transition-colors">
-                  Anti Tarnish Daily Wear
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=hip-belts-oddiyanam" className="hover:text-gold transition-colors">
-                  Hip Belts (Oddiyanam)
-                </Link>
-              </li>
+              {categories.slice(0, 5).map((cat) => (
+                <li key={cat.id}>
+                  <Link href={`/shop?category=${cat.slug}`} className="hover:text-gold transition-colors">
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

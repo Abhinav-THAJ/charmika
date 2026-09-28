@@ -1,13 +1,13 @@
-'use client';
 
 import React from 'react';
 import Link from 'next/link';
-import { MOCK_PRODUCTS } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
-export const BestSellersSection: React.FC = () => {
-  const bestSellers = MOCK_PRODUCTS.filter((p) => p.isBestSeller).slice(0, 4);
+export const BestSellersSection = async () => {
+  const products = await WooCommerceService.getProducts();
+  const bestSellers = products.filter((p) => p.isBestSeller).slice(0, 4);
 
   return (
     <section className="py-16 bg-white">

@@ -590,7 +590,7 @@ export class WooCommerceService {
       }
     }
     const product = MOCK_PRODUCTS.find((p) => p.slug === slug);
-    return product || MOCK_PRODUCTS[0];
+    return product || null;
   }
 
   // Get Rental Products
