@@ -1,13 +1,11 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
-import { MOCK_PRODUCTS } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { RentalProductCard } from '@/components/product/RentalProductCard';
 import { Clock, ShieldCheck, RefreshCw, Sparkles, HelpCircle, CheckCircle2 } from 'lucide-react';
 
-export default function RentalPage() {
-  const rentalProducts = MOCK_PRODUCTS.filter((p) => p.isRentalAvailable);
+export default async function RentalPage() {
+  const rentalProducts = await WooCommerceService.getRentalProducts();
 
   return (
     <div className="py-12 bg-beige min-h-screen">

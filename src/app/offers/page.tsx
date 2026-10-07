@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { MOCK_COUPONS, MOCK_PRODUCTS } from '@/services/woocommerce';
+import { MOCK_COUPONS, WooCommerceService } from '@/services/woocommerce';
+import { Product } from '@/types';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Tag, Clock, Copy, Check } from 'lucide-react';
 
@@ -26,7 +27,15 @@ export default function OffersPage() {
     setTimeout(() => setCopiedCode(null), 3000);
   };
 
-  const saleProducts = MOCK_PRODUCTS.filter((p) => p.onSale);
+  const [saleProducts, setSaleProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function loadSaleProducts() {
+      const products = await WooCommerceService.getProducts();
+      setSaleProducts(products.filter((p) => p.onSale));
+    }
+    loadSaleProducts();
+  }, []);
 
   return (
     <div className="py-12 bg-beige min-h-screen">

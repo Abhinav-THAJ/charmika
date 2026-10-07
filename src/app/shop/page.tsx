@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { WooCommerceService, MOCK_CATEGORIES } from '@/services/woocommerce';
-import { Product } from '@/types';
+import { WooCommerceService } from '@/services/woocommerce';
+import { Product, Category } from '@/types';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Filter, SlidersHorizontal, ChevronRight, X, RotateCcw } from 'lucide-react';
 
@@ -14,6 +14,7 @@ function ShopContent() {
   const initialSearch = searchParams.get('search') || '';
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters state
@@ -27,15 +28,19 @@ function ShopContent() {
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const data = await WooCommerceService.getProducts({
-        category: category !== 'all' ? category : undefined,
-        sort,
-        type: jewelleryType !== 'all' ? jewelleryType : undefined,
-        rentalOnly,
-        maxPrice,
-        search: initialSearch,
-      });
-      setProducts(data);
+      const [productsData, categoriesData] = await Promise.all([
+        WooCommerceService.getProducts({
+          category: category !== 'all' ? category : undefined,
+          sort,
+          type: jewelleryType !== 'all' ? jewelleryType : undefined,
+          rentalOnly,
+          maxPrice,
+          search: initialSearch,
+        }),
+        WooCommerceService.getCategories()
+      ]);
+      setProducts(productsData);
+      setCategories(categoriesData);
       setLoading(false);
     }
     load();
@@ -70,7 +75,7 @@ function ShopContent() {
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-maroon">
               {category === 'all'
                 ? 'Luxury Jewellery Catalogue'
-                : MOCK_CATEGORIES.find((c) => c.slug === category)?.name || 'Jewellery Collection'}
+                : categories.find((c) => c.slug === category)?.name || 'Jewellery Collection'}
             </h1>
             <p className="text-xs text-charcoal/70 mt-1">
               Showing {products.length} exquisite designs handcrafted for royalty.
@@ -129,7 +134,7 @@ function ShopContent() {
                 >
                   All Categories
                 </button>
-                {MOCK_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setCategory(cat.slug)}

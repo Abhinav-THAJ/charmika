@@ -29,11 +29,8 @@ export const CategoryGrid = async () => {
               className="group relative rounded-2xl overflow-hidden aspect-[4/5] shadow-xs hover:shadow-luxury transition-all duration-500 border border-gold/20"
             >
               <img
-                src={cat.image}
+                src={cat.image || '/images/long-haarams.png'}
                 alt={cat.name}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/images/long-haarams.png';
-                }}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 brightness-95"
               />
 

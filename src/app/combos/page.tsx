@@ -1,12 +1,10 @@
-'use client';
-
 import React from 'react';
-import { MOCK_PRODUCTS } from '@/services/woocommerce';
+import { WooCommerceService } from '@/services/woocommerce';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Tag, Sparkles, ShieldCheck } from 'lucide-react';
 
-export default function CombosPage() {
-  const comboProducts = MOCK_PRODUCTS.filter((p) => p.isCombo || p.price > 10000);
+export default async function CombosPage() {
+  const comboProducts = await WooCommerceService.getComboProducts();
 
   return (
     <div className="py-12 bg-beige min-h-screen">
