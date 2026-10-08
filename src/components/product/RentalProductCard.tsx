@@ -79,11 +79,12 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
         </div>
 
         {/* Hover slide-up: Rent Now */}
-        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
           <a
             href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="w-full py-2 bg-gold text-maroon text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md hover:bg-white text-center"
           >
             <Clock className="w-3.5 h-3.5" />
@@ -97,7 +98,7 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
         <div>
 
 
-          <Link href={`/product/${product.slug}`}>
+          <Link href={`/product/${product.slug}`} className="before:absolute before:inset-0 before:z-[5]" aria-label={`View ${product.name}`}>
             <h3 className="font-serif text-sm font-semibold text-maroon hover:text-gold transition-colors line-clamp-1">
               {product.name}
             </h3>
@@ -131,20 +132,15 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
               )}
               <span className="text-[9px] text-charcoal/40">to buy</span>
             </div>
-            <Link
-              href={`/product/${product.slug}`}
-              className="text-[11px] font-semibold text-gold hover:text-maroon underline underline-offset-2 transition-colors"
-            >
-              Details
-            </Link>
           </div>
 
           {/* Action button - Rent Now */}
-          <div>
+          <div className="relative z-10">
             <a
               href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="w-full py-2.5 bg-maroon hover:bg-gold hover:text-maroon text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-center shadow-xs"
             >
               <Clock className="w-4 h-4" />

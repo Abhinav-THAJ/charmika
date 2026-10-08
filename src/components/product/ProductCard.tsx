@@ -74,9 +74,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Quick Add To Cart Slide-up Button */}
-        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/60 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2">
+        <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/60 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex gap-2 z-10">
           <button
-            onClick={() => addToCart(product, false)}
+            onClick={(e) => { e.preventDefault(); addToCart(product, false); }}
             className="w-full py-2 bg-maroon hover:bg-gold hover:text-maroon text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
@@ -90,7 +90,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <div>
 
 
-          <Link href={`/product/${product.slug}`}>
+          <Link href={`/product/${product.slug}`} className="before:absolute before:inset-0 before:z-[5]" aria-label={`View ${product.name}`}>
             <h3 className="font-serif text-sm font-semibold text-maroon hover:text-gold transition-colors line-clamp-1">
               {product.name}
             </h3>
@@ -113,18 +113,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
-            <Link
-              href={`/product/${product.slug}`}
-              className="text-[11px] font-semibold text-gold hover:text-maroon underline underline-offset-2 transition-colors"
-            >
-              Details
-            </Link>
           </div>
 
           {/* Add to Cart + Buy Now Buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 relative z-10">
             <button
-              onClick={() => addToCart(product, false)}
+              onClick={(e) => { e.preventDefault(); addToCart(product, false); }}
               className="flex-1 py-2 bg-beige border border-gold/40 hover:bg-gold hover:border-gold text-maroon text-[11px] font-semibold rounded-lg transition-all flex items-center justify-center gap-1 shadow-xs"
             >
               <ShoppingBag className="w-3 h-3" />
@@ -132,7 +126,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </button>
             <Link
               href="/checkout"
-              onClick={() => addToCart(product, false)}
+              onClick={(e) => { e.stopPropagation(); addToCart(product, false); }}
               className="flex-1 py-2 bg-maroon hover:bg-gold hover:text-maroon text-white text-[11px] font-semibold rounded-lg transition-all flex items-center justify-center gap-1 shadow-xs"
             >
               ⚡ Buy Now

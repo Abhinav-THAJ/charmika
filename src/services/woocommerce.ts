@@ -32,8 +32,7 @@ export class WooCommerceService {
           'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json'
         },
-        // Cache revalidation time (e.g., 60 seconds)
-        next: { revalidate: 60 }
+        cache: 'no-store'
       });
       
       if (!response.ok) return null;
@@ -58,7 +57,7 @@ export class WooCommerceService {
     return {
       id: wooProduct.id,
       name: wooProduct.name,
-      slug: wooProduct.slug,
+      slug: wooProduct.slug || wooProduct.id?.toString(),
       sku: wooProduct.sku || `SKU-${wooProduct.id}`,
       price: parseFloat(wooProduct.price || '0'),
       regularPrice: parseFloat(wooProduct.regular_price || wooProduct.price || '0'),
@@ -228,17 +227,21 @@ export class WooCommerceService {
       if (wooProducts && Array.isArray(wooProducts) && wooProducts.length > 0) {
         return this.mapWooProduct(wooProducts[0]);
       }
+      // Fallback for when slug is actually an ID (if missing in WordPress)
+      if (!isNaN(Number(slug))) {
+        const productById = await this.fetchWooAPI(`products/${slug}`);
+        if (productById && !productById.code) { // Ensure it's not an error response
+          return this.mapWooProduct(productById);
+        }
+      }
     } else {
       try {
         const queryParams = new URLSearchParams();
-        queryParams.append('search', slug);
-        const res = await fetch('/api/products?' + queryParams.toString());
+        queryParams.append('slug', slug);
+        const res = await fetch('/api/product?' + queryParams.toString());
         if (res.ok) {
-          const products = await res.json();
-          // Find exact match by slug since search might return partial matches
-          const exactProduct = products.find((p: Product) => p.slug === slug);
-          if (exactProduct) return exactProduct;
-          if (products.length > 0) return products[0];
+          const product = await res.json();
+          return product;
         }
       } catch (e) {
         console.error('Failed to fetch product by slug on client', e);
