@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { WooCommerceService } from '@/services/woocommerce';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const params = Object.fromEntries(searchParams.entries());

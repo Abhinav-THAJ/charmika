@@ -149,14 +149,15 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               onMouseEnter={() => openMenu('new')}
               onMouseLeave={closeMenu}
             >
-              <button
+              <Link
+                href="/new-arrivals"
                 className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-semibold text-maroon hover:text-gold transition-colors px-3 py-2"
                 onFocus={() => openMenu('new')}
               >
                 <Sparkles className="w-3 h-3 text-gold" />
                 New Arrivals
                 <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'new' ? 'rotate-180' : ''}`} />
-              </button>
+              </Link>
               {activeMenu === 'new' && (
                 <div
                   className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
@@ -166,18 +167,18 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
                       <p className="text-[10px] uppercase tracking-widest text-gold font-bold">✨ Fresh Additions</p>
-                      <Link href="/shop?sort=newest" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold uppercase tracking-wider">
+                      <Link href="/new-arrivals" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold uppercase tracking-wider">
                         View All →
                       </Link>
                     </div>
                     <div className="grid grid-cols-2 gap-2.5">
                       {[
-                        { href: '/shop?sort=newest&category=necklaces', label: 'New Necklaces', badge: 'Just In', color: 'bg-maroon text-white' },
-                        { href: '/shop?sort=newest&category=earrings', label: 'New Earrings', badge: 'Trending', color: 'bg-gold text-maroon' },
-                        { href: '/shop?sort=newest&category=temple-jewellery', label: 'Temple Collection', badge: 'New', color: 'bg-maroon text-white' },
-                        { href: '/shop?sort=newest&category=anti-tarnish-jewellery', label: 'Anti Tarnish Series', badge: 'Popular', color: 'bg-gold text-maroon' },
-                        { href: '/shop?sort=newest&category=bangles-bracelets', label: 'New Bangles', badge: 'New', color: 'bg-maroon text-white' },
-                        { href: '/shop?sort=newest', label: 'All New Arrivals', badge: '🌟', color: 'bg-beige text-maroon' },
+                        { href: '/shop?category=necklace', label: 'New Necklaces', badge: 'Just In', color: 'bg-maroon text-white' },
+                        { href: '/shop?category=earrings', label: 'New Earrings', badge: 'Trending', color: 'bg-gold text-maroon' },
+                        { href: '/shop?category=traditional-long-haramas', label: 'Temple Collection', badge: 'New', color: 'bg-maroon text-white' },
+                        { href: '/shop?category=anti-tarnish-jewellery', label: 'Anti Tarnish Series', badge: 'Popular', color: 'bg-gold text-maroon' },
+                        { href: '/shop?category=bangles', label: 'New Bangles', badge: 'New', color: 'bg-maroon text-white' },
+                        { href: '/new-arrivals', label: 'All New Arrivals', badge: '🌟', color: 'bg-beige text-maroon' },
                       ].map(({ href, label, badge, color }) => (
                         <Link
                           key={href}
@@ -193,7 +194,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   </div>
                   <div className="bg-maroon/5 border-t border-gold/20 px-5 py-3 flex items-center justify-between">
                     <p className="text-[10px] text-charcoal/60">Handcrafted in Kottayam, Kerala</p>
-                    <Link href="/shop?sort=newest" onClick={() => setActiveMenu(null)} className="text-[10px] font-bold text-maroon hover:text-gold transition-colors">
+                    <Link href="/new-arrivals" onClick={() => setActiveMenu(null)} className="text-[10px] font-bold text-maroon hover:text-gold transition-colors">
                       Shop New Arrivals →
                     </Link>
                   </div>
@@ -222,7 +223,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                     <div className="col-span-2 p-5">
                       <p className="text-[10px] uppercase tracking-widest text-gold font-bold mb-3">Shop by Category</p>
                       <div className="grid grid-cols-2 gap-1.5">
-                        {categories.map((cat) => (
+                        {categories.filter(c => c.slug !== 'uncategorized' && c.count > 0).map((cat) => (
                           <Link
                             key={cat.id}
                             href={`/shop?category=${cat.slug}`}
@@ -473,7 +474,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2">
                   🏠 Home
                 </Link>
-                <Link href="/shop?sort=newest" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                <Link href="/new-arrivals" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
                   <Sparkles className="w-4 h-4 text-gold" /> New Arrivals
                 </Link>
 
@@ -488,7 +489,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   </button>
                   {mobileCatOpen && (
                     <div className="pl-4 pb-2 flex flex-col gap-0.5 bg-white/60 rounded-xl mt-1">
-                      {categories.map((cat) => (
+                      {categories.filter(c => c.slug !== 'uncategorized' && c.count > 0).map((cat) => (
                         <Link
                           key={cat.id}
                           href={`/shop?category=${cat.slug}`}

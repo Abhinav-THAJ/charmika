@@ -26,6 +26,13 @@ function ShopContent() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   useEffect(() => {
+    const urlCat = searchParams.get('category') || 'all';
+    const urlSort = searchParams.get('sort') || 'popularity';
+    setCategory(urlCat);
+    setSort(urlSort);
+  }, [searchParams]);
+
+  useEffect(() => {
     async function load() {
       setLoading(true);
       const [productsData, categoriesData] = await Promise.all([
@@ -75,7 +82,8 @@ function ShopContent() {
             <h1 className="font-serif text-3xl sm:text-4xl font-bold text-maroon">
               {category === 'all'
                 ? 'Luxury Jewellery Catalogue'
-                : categories.find((c) => c.slug === category)?.name || 'Jewellery Collection'}
+                : categories.find((c) => c.slug === category)?.name ||
+                  (category === 'new-arrivals' ? 'New Arrivals Collection' : category.replace(/-/g, ' '))}
             </h1>
             <p className="text-xs text-charcoal/70 mt-1">
               Showing {products.length} exquisite designs handcrafted for royalty.

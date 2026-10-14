@@ -6,7 +6,10 @@ import { ArrowUpRight } from 'lucide-react';
 
 export const CategoryGrid = async () => {
   const categories = await WooCommerceService.getCategories();
-  const featuredCategories = categories.filter((c) => c.featured);
+  const validCategories = categories.filter((c) => c.slug !== 'uncategorized' && c.count > 0);
+  const featuredCategories = validCategories.filter((c) => c.featured).length > 0
+    ? validCategories.filter((c) => c.featured)
+    : validCategories.slice(0, 8);
 
   return (
     <section className="py-16 bg-beige">

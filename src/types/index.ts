@@ -20,6 +20,12 @@ export interface Review {
   verified: boolean;
 }
 
+export interface ProductCategory {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -41,6 +47,8 @@ export interface Product {
   reviewCount: number;
   category: string;
   categorySlug: string;
+  categories?: ProductCategory[];
+  categorySlugs?: string[];
   subCategory?: string;
   jewelleryType: 'Gold Plated' | 'Temple Jewellery' | 'AD Stone' | 'Anti Tarnish' | 'Kundan' | 'Silver Finish';
   shortDescription: string;

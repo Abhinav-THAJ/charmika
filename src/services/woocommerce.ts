@@ -43,6 +43,23 @@ export class WooCommerceService {
     }
   }
 
+  // Internal helper for fetching all pages from Woo API
+  private static async fetchAllWooProducts(endpoint: string, maxPages = 10): Promise<any[]> {
+    let page = 1;
+    const allItems: any[] = [];
+    const separator = endpoint.includes('?') ? '&' : '?';
+
+    while (page <= maxPages) {
+      const url = `${endpoint}${separator}per_page=100&page=${page}`;
+      const data = await this.fetchWooAPI(url);
+      if (!data || !Array.isArray(data) || data.length === 0) break;
+      allItems.push(...data);
+      if (data.length < 100) break;
+      page++;
+    }
+    return allItems;
+  }
+
   // Map WooCommerce product schema to our custom Product schema
   private static mapWooProduct(wooProduct: any): Product {
     const getAttribute = (name: string) => {
@@ -54,6 +71,14 @@ export class WooCommerceService {
       return meta ? meta.value : null;
     };
 
+    const categoriesList = Array.isArray(wooProduct.categories)
+      ? wooProduct.categories.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+        }))
+      : [];
+
     return {
       id: wooProduct.id,
       name: wooProduct.name,
@@ -63,7 +88,7 @@ export class WooCommerceService {
       regularPrice: parseFloat(wooProduct.regular_price || wooProduct.price || '0'),
       salePrice: wooProduct.sale_price ? parseFloat(wooProduct.sale_price) : undefined,
       onSale: wooProduct.on_sale,
-      isNew: getAttribute('New') === 'Yes',
+      isNew: getAttribute('New') === 'Yes' || categoriesList.some((c: { id: number; name: string; slug: string }) => c.slug.toLowerCase().includes('new-arrival') || c.name.toLowerCase().includes('new arrival')),
       isBestSeller: getAttribute('Bestseller') === 'Yes',
       isRentalAvailable: getAttribute('Rental Available') === 'Yes',
       rentalPricePerDay: parseFloat(getMeta('_rental_price') || '0'),
@@ -71,22 +96,28 @@ export class WooCommerceService {
       stockStatus: wooProduct.stock_status,
       rating: parseFloat(wooProduct.average_rating || '0'),
       reviewCount: wooProduct.rating_count || 0,
-      category: wooProduct.categories?.[0]?.name || 'Uncategorized',
-      categorySlug: wooProduct.categories?.[0]?.slug || 'uncategorized',
-      jewelleryType: getAttribute('Jewellery Type') as any || 'Gold Plated',
+      category: categoriesList[0]?.name || 'Uncategorized',
+      categorySlug: categoriesList[0]?.slug || 'uncategorized',
+      categories: categoriesList,
+      categorySlugs: categoriesList.map((c: any) => c.slug),
+      jewelleryType: (getAttribute('Jewellery Type') as any) || 'Gold Plated',
       shortDescription: wooProduct.short_description?.replace(/<[^>]+>/g, '') || '',
       description: wooProduct.description?.replace(/<[^>]+>/g, '') || '',
-      images: wooProduct.images?.length ? wooProduct.images.map((img: any) => ({
-        id: img.id,
-        src: img.src,
-        alt: img.alt || wooProduct.name
-      })) : [{ id: 1, src: '/images/placeholder.jpg', alt: wooProduct.name }],
+      images: wooProduct.images?.length
+        ? wooProduct.images.map((img: any) => ({
+            id: img.id,
+            src: img.src,
+            alt: img.alt || wooProduct.name,
+          }))
+        : [{ id: 1, src: '/images/placeholder.jpg', alt: wooProduct.name }],
       specifications: {
         material: getAttribute('Material') || '',
         plating: getAttribute('Plating') || '',
         stoneType: getAttribute('Stone Type') || '',
         weight: wooProduct.weight ? `${wooProduct.weight} g` : '',
-        dimensions: wooProduct.dimensions ? `${wooProduct.dimensions.length}x${wooProduct.dimensions.width}x${wooProduct.dimensions.height}` : '',
+        dimensions: wooProduct.dimensions
+          ? `${wooProduct.dimensions.length}x${wooProduct.dimensions.width}x${wooProduct.dimensions.height}`
+          : '',
         careInstructions: getAttribute('Care Instructions') || 'Wipe with soft cloth.',
       },
     };
@@ -95,7 +126,7 @@ export class WooCommerceService {
   // Get All Categories
   static async getCategories(): Promise<Category[]> {
     if (typeof window === 'undefined') {
-      const wooCategories = await this.fetchWooAPI('products/categories?hide_empty=true');
+      const wooCategories = await this.fetchWooAPI('products/categories?per_page=100&hide_empty=false');
       if (wooCategories && Array.isArray(wooCategories) && wooCategories.length > 0) {
         return wooCategories.map((c: any) => ({
           id: c.id,
@@ -104,7 +135,7 @@ export class WooCommerceService {
           description: c.description || '',
           image: c.image?.src || '',
           count: c.count,
-          featured: c.name.toLowerCase().includes('featured')
+          featured: c.name.toLowerCase().includes('featured') || c.count > 0,
         }));
       }
     } else {
@@ -132,15 +163,47 @@ export class WooCommerceService {
     sort?: string;
   }): Promise<Product[]> {
     let result: Product[] = [];
-    
+
     // Only attempt real API fetch if on the server
     if (typeof window === 'undefined') {
-      let query = 'products?per_page=100';
-      if (params?.search) query += `&search=${encodeURIComponent(params.search)}`;
-      
-      const wooProducts = await this.fetchWooAPI(query);
+      let categoryId: number | undefined;
+      let categoryMatched = false;
+
+      if (params?.category && params.category !== 'all') {
+        const catParam = params.category.toLowerCase().trim();
+        const catParamClean = catParam.replace(/[-_]/g, '');
+        const categories = await this.getCategories();
+        const matched = categories.find(
+          (c) =>
+            c.slug.toLowerCase() === catParam ||
+            c.name.toLowerCase() === catParam ||
+            c.slug.toLowerCase().replace(/[-_]/g, '') === catParamClean ||
+            c.name.toLowerCase().replace(/[-_]/g, ' ') === catParamClean
+        );
+
+        if (matched) {
+          categoryId = matched.id;
+          categoryMatched = true;
+        }
+      }
+
+      // If category was specified but doesn't exist in WooCommerce, return empty array immediately
+      if (params?.category && params.category !== 'all' && !categoryMatched) {
+        return [];
+      }
+
+      const queryParts: string[] = [];
+      if (categoryId !== undefined) {
+        queryParts.push(`category=${categoryId}`);
+      }
+      if (params?.search) {
+        queryParts.push(`search=${encodeURIComponent(params.search)}`);
+      }
+
+      const query = queryParts.length > 0 ? `products?${queryParts.join('&')}` : 'products';
+      const wooProducts = await this.fetchAllWooProducts(query);
       if (wooProducts && Array.isArray(wooProducts) && wooProducts.length > 0) {
-        result = wooProducts.map(p => this.mapWooProduct(p));
+        result = wooProducts.map((p) => this.mapWooProduct(p));
       } else {
         result = [];
       }
@@ -156,7 +219,7 @@ export class WooCommerceService {
         if (params?.minPrice !== undefined) queryParams.append('minPrice', params.minPrice.toString());
         if (params?.maxPrice !== undefined) queryParams.append('maxPrice', params.maxPrice.toString());
         if (params?.sort) queryParams.append('sort', params.sort);
-        
+
         const res = await fetch('/api/products?' + queryParams.toString());
         if (res.ok) {
           result = await res.json();
@@ -169,11 +232,41 @@ export class WooCommerceService {
     }
 
     if (params?.category && params.category !== 'all') {
-      result = result.filter(
-        (p) =>
-          p.categorySlug === params.category ||
-          p.category.toLowerCase() === params.category?.toLowerCase()
-      );
+      const catParam = params.category.toLowerCase().trim();
+      const catParamClean = catParam.replace(/[-_]/g, '');
+
+      result = result.filter((p) => {
+        if (
+          p.categorySlug.toLowerCase() === catParam ||
+          p.category.toLowerCase() === catParam ||
+          p.categorySlug.toLowerCase().replace(/[-_]/g, '') === catParamClean
+        ) {
+          return true;
+        }
+        if (
+          p.categories &&
+          p.categories.some(
+            (c) =>
+              c.slug.toLowerCase() === catParam ||
+              c.name.toLowerCase() === catParam ||
+              c.slug.toLowerCase().replace(/[-_]/g, '') === catParamClean ||
+              c.name.toLowerCase().replace(/[-_]/g, ' ') === catParamClean
+          )
+        ) {
+          return true;
+        }
+        if (
+          p.categorySlugs &&
+          p.categorySlugs.some(
+            (s) =>
+              s.toLowerCase() === catParam ||
+              s.toLowerCase().replace(/[-_]/g, '') === catParamClean
+          )
+        ) {
+          return true;
+        }
+        return false;
+      });
     }
 
     
@@ -260,6 +353,24 @@ export class WooCommerceService {
   static async getComboProducts(): Promise<Product[]> {
     const products = await this.getProducts();
     return products.filter((p) => p.isCombo || p.price > 10000);
+  }
+
+  // Get New Arrival Products (strictly filtered by WooCommerce 'New Arrivals' category)
+  static async getNewArrivalProducts(): Promise<Product[]> {
+    const categories = await this.getCategories();
+    const newArrivalCat = categories.find(
+      (c) =>
+        c.slug.toLowerCase() === 'new-arrivals' ||
+        c.slug.toLowerCase() === 'new-arrival' ||
+        c.slug.toLowerCase().replace(/[-_]/g, '') === 'newarrivals' ||
+        c.name.toLowerCase().includes('new arrival')
+    );
+
+    if (!newArrivalCat) {
+      return [];
+    }
+
+    return await this.getProducts({ category: newArrivalCat.slug });
   }
 
   // Verify Coupon
