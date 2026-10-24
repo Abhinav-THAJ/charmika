@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   Search, Heart, ShoppingBag, Menu, X, ChevronDown, Sparkles, Gem, Clock,
-  Star, Gift, Tag, Phone, MapPin, Zap, Crown, Shield, RefreshCw, Video,
+  Star, Gift, Tag, Phone, MapPin, Zap, Crown, Shield, RefreshCw, Video, Truck,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -445,6 +445,10 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
             <Link href="/contact" className={navLinkClass('/contact', 'px-3 py-2')}>
               Contact
             </Link>
+            <Link href="/track" className={navLinkClass('/track', 'px-3 py-2 text-gold font-semibold flex items-center gap-1')}>
+              <Truck className="w-3.5 h-3.5 text-gold" />
+              Track
+            </Link>
           </nav>
         </div>
       </header>
@@ -518,6 +522,9 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 </Link>
                 <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10">
                   📞 Contact Us
+                </Link>
+                <Link href="/track" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                  <Truck className="w-4 h-4 text-gold" /> Track Order
                 </Link>
                 <Link href="/return-policy" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 text-xs text-charcoal/60">
                   Return Policy

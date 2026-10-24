@@ -34,28 +34,86 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
+      // Step 1: Create Order in WooCommerce
+      const orderRes = await fetch('/api/orders/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          billing: formData,
+          shipping: formData,
+          line_items: cart.map((item) => ({
+            productId: item.product.id,
+            quantity: item.quantity,
+            isRental: item.isRental,
+            rentalDurationDays: item.rentalDurationDays,
+            rentalStartDate: item.rentalStartDate,
+            rentalEndDate: item.rentalEndDate,
+          })),
+          payment_method: 'payu',
+          payment_method_title: 'PayU Secure Checkout',
+          status: 'pending',
+          customer_note: `Charmika Online Order - Phone: ${formData.phone}`,
+        }),
+      });
 
-      // If payment method is PayU
+      const orderData = await orderRes.json();
+
+      if (!orderData.success) {
+        if (orderData.needsPermissionUpdate) {
+          setError(
+            'WooCommerce REST API key only has Read permissions. Please go to WordPress Admin > WooCommerce > Settings > Advanced > REST API, edit your API Key and change Permissions to "Read/Write" to allow order placement.'
+          );
+        } else {
+          setError(orderData.error || 'Failed to create order. Please try again.');
+        }
+        setSubmitting(false);
+        return;
+      }
+
+      const orderId = orderData.orderId;
+      const orderNumber = orderData.orderNumber || orderId;
+
+      // Save order metadata locally for fallback
+      try {
+        localStorage.setItem(
+          'charmika_pending_order',
+          JSON.stringify({
+            orderId,
+            orderNumber,
+            total: totalAmount,
+            email: formData.email,
+            phone: formData.phone,
+            name: `${formData.firstName} ${formData.lastName}`,
+          })
+        );
+      } catch (e) {}
+
+      // Step 2: Initialize PayU Payment with Order ID
       if (paymentMethod === 'payu') {
-        const txnid = `txn${Date.now()}`;
+        const txnid = `CBL-ORD-${orderId}-${Date.now()}`;
         const amount = totalAmount.toString();
-        const productinfo = 'Charmika Jewellery Order';
-        
+        const productinfo = `Charmika Jewellery Order #${orderNumber}`;
+
         const hashRes = await fetch('/api/payu/hash', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ txnid, amount, productinfo, firstname: formData.firstName, email: formData.email })
+          body: JSON.stringify({
+            txnid,
+            amount,
+            productinfo,
+            firstname: formData.firstName,
+            email: formData.email,
+          }),
         });
         const hashData = await hashRes.json();
-        
+
         if (hashData.success) {
           const form = document.createElement('form');
           form.method = 'POST';
-          // Automatically switches between test and live based on PAYU_ENV in .env.local
           form.action = hashData.isTest
             ? 'https://test.payu.in/_payment'
             : 'https://secure.payu.in/_payment';
-          
+
           const appendInput = (name: string, value: string) => {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -63,7 +121,7 @@ export default function CheckoutPage() {
             input.value = value;
             form.appendChild(input);
           };
-          
+
           appendInput('key', hashData.key);
           appendInput('txnid', txnid);
           appendInput('amount', amount);
@@ -74,20 +132,19 @@ export default function CheckoutPage() {
           appendInput('surl', `${window.location.origin}/api/payu/success`);
           appendInput('furl', `${window.location.origin}/api/payu/success`);
           appendInput('hash', hashData.hash);
-          
+
           document.body.appendChild(form);
           form.submit();
         } else {
-           setError('Failed to initiate PayU payment. Please try again.');
-           setSubmitting(false);
+          setError('Failed to initiate PayU payment. Please try again.');
+          setSubmitting(false);
         }
         return;
       }
-
     } catch (err: any) {
-      console.error('Payment error:', err);
+      console.error('Order/Payment error:', err);
       setError(
-        'An error occurred while initializing payment. Please try again.'
+        'An unexpected error occurred while processing your order. Please try again.'
       );
       setSubmitting(false);
     }

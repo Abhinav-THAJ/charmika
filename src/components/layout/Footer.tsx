@@ -127,6 +127,11 @@ export const Footer: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 </Link>
               </li>
               <li>
+                <Link href="/track" className="hover:text-gold transition-colors text-gold flex items-center gap-1">
+                  Track Order
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="hover:text-gold transition-colors">
                   About Founder Lekshmi D.S
                 </Link>
