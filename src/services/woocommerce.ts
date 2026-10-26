@@ -79,6 +79,66 @@ export class WooCommerceService {
         }))
       : [];
 
+    const tagsList = Array.isArray(wooProduct.tags)
+      ? wooProduct.tags.map((t: any) => ({
+          id: t.id,
+          name: t.name,
+          slug: t.slug,
+        }))
+      : [];
+
+    const isNew =
+      getAttribute('New') === 'Yes' ||
+      categoriesList.some(
+        (c: any) =>
+          c.slug.toLowerCase().includes('new-arrival') ||
+          c.name.toLowerCase().includes('new arrival') ||
+          c.slug.toLowerCase().replace(/[-_]/g, '') === 'newarrivals'
+      ) ||
+      tagsList.some(
+        (t: any) =>
+          t.slug.toLowerCase().includes('new-arrival') ||
+          t.name.toLowerCase().includes('new arrival') ||
+          t.slug.toLowerCase() === 'new'
+      ) ||
+      wooProduct.name.toLowerCase().includes('new arrival');
+
+    const isCombo =
+      getAttribute('Combo') === 'Yes' ||
+      wooProduct.name.toLowerCase().includes('combo') ||
+      /\bset\b/i.test(wooProduct.name) ||
+      wooProduct.name.toLowerCase().includes('combo set') ||
+      wooProduct.name.toLowerCase().includes('pendant set') ||
+      wooProduct.name.toLowerCase().includes('choker set') ||
+      categoriesList.some(
+        (c: any) =>
+          c.slug.toLowerCase().includes('combo') ||
+          c.name.toLowerCase().includes('combo') ||
+          c.slug.toLowerCase().includes('set')
+      ) ||
+      tagsList.some(
+        (t: any) =>
+          t.slug.toLowerCase().includes('combo') ||
+          t.name.toLowerCase().includes('combo') ||
+          t.slug.toLowerCase().includes('set')
+      );
+
+    const isRental =
+      getAttribute('Rental Available') === 'Yes' ||
+      getAttribute('Rental') === 'Yes' ||
+      categoriesList.some(
+        (c: any) =>
+          c.slug.toLowerCase().includes('rental') ||
+          c.name.toLowerCase().includes('rental') ||
+          c.slug.toLowerCase() === 'rent'
+      ) ||
+      tagsList.some(
+        (t: any) =>
+          t.slug.toLowerCase().includes('rental') ||
+          t.name.toLowerCase().includes('rental') ||
+          t.slug.toLowerCase() === 'rent'
+      );
+
     return {
       id: wooProduct.id,
       name: wooProduct.name,
@@ -88,11 +148,12 @@ export class WooCommerceService {
       regularPrice: parseFloat(wooProduct.regular_price || wooProduct.price || '0'),
       salePrice: wooProduct.sale_price ? parseFloat(wooProduct.sale_price) : undefined,
       onSale: wooProduct.on_sale,
-      isNew: getAttribute('New') === 'Yes' || categoriesList.some((c: { id: number; name: string; slug: string }) => c.slug.toLowerCase().includes('new-arrival') || c.name.toLowerCase().includes('new arrival')),
+      isNew,
       isBestSeller: getAttribute('Bestseller') === 'Yes',
-      isRentalAvailable: getAttribute('Rental Available') === 'Yes',
+      isRentalAvailable: isRental,
       rentalPricePerDay: parseFloat(getMeta('_rental_price') || '0'),
       securityDeposit: parseFloat(getMeta('_security_deposit') || '0'),
+      isCombo,
       stockStatus: wooProduct.stock_status,
       rating: parseFloat(wooProduct.average_rating || '0'),
       reviewCount: wooProduct.rating_count || 0,
@@ -100,6 +161,8 @@ export class WooCommerceService {
       categorySlug: categoriesList[0]?.slug || 'uncategorized',
       categories: categoriesList,
       categorySlugs: categoriesList.map((c: any) => c.slug),
+      tags: tagsList.map((t: any) => t.name),
+      tagSlugs: tagsList.map((t: any) => t.slug),
       jewelleryType: (getAttribute('Jewellery Type') as any) || 'Gold Plated',
       shortDescription: wooProduct.short_description?.replace(/<[^>]+>/g, '') || '',
       description: wooProduct.description?.replace(/<[^>]+>/g, '') || '',
@@ -160,6 +223,7 @@ export class WooCommerceService {
     type?: string;
     rentalOnly?: boolean;
     combosOnly?: boolean;
+    newArrivalsOnly?: boolean;
     sort?: string;
   }): Promise<Product[]> {
     let result: Product[] = [];
@@ -172,18 +236,28 @@ export class WooCommerceService {
       if (params?.category && params.category !== 'all') {
         const catParam = params.category.toLowerCase().trim();
         const catParamClean = catParam.replace(/[-_]/g, '');
-        const categories = await this.getCategories();
-        const matched = categories.find(
-          (c) =>
-            c.slug.toLowerCase() === catParam ||
-            c.name.toLowerCase() === catParam ||
-            c.slug.toLowerCase().replace(/[-_]/g, '') === catParamClean ||
-            c.name.toLowerCase().replace(/[-_]/g, ' ') === catParamClean
-        );
 
-        if (matched) {
-          categoryId = matched.id;
+        const catParamAlpha = catParam.replace(/[^a-z0-9]/g, '');
+        if (catParam === 'new-arrivals' || catParam === 'new-arrival' || catParamAlpha === 'newarrivals') {
           categoryMatched = true;
+        } else if (catParam === 'combos' || catParam === 'combo') {
+          categoryMatched = true;
+        } else if (catParam === 'rental' || catParamAlpha === 'rental' || catParam === 'rent') {
+          categoryMatched = true;
+        } else {
+          const categories = await this.getCategories();
+          const matched = categories.find(
+            (c) =>
+              c.slug.toLowerCase() === catParam ||
+              c.name.toLowerCase() === catParam ||
+              c.slug.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha ||
+              c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha
+          );
+
+          if (matched) {
+            categoryId = matched.id;
+            categoryMatched = true;
+          }
         }
       }
 
@@ -216,6 +290,7 @@ export class WooCommerceService {
         if (params?.type && params.type !== 'all') queryParams.append('type', params.type);
         if (params?.rentalOnly) queryParams.append('rentalOnly', 'true');
         if (params?.combosOnly) queryParams.append('combosOnly', 'true');
+        if (params?.newArrivalsOnly) queryParams.append('newArrivalsOnly', 'true');
         if (params?.minPrice !== undefined) queryParams.append('minPrice', params.minPrice.toString());
         if (params?.maxPrice !== undefined) queryParams.append('maxPrice', params.maxPrice.toString());
         if (params?.sort) queryParams.append('sort', params.sort);
@@ -235,41 +310,64 @@ export class WooCommerceService {
       const catParam = params.category.toLowerCase().trim();
       const catParamClean = catParam.replace(/[-_]/g, '');
 
-      result = result.filter((p) => {
-        if (
-          p.categorySlug.toLowerCase() === catParam ||
-          p.category.toLowerCase() === catParam ||
-          p.categorySlug.toLowerCase().replace(/[-_]/g, '') === catParamClean
-        ) {
-          return true;
-        }
-        if (
-          p.categories &&
-          p.categories.some(
-            (c) =>
-              c.slug.toLowerCase() === catParam ||
-              c.name.toLowerCase() === catParam ||
-              c.slug.toLowerCase().replace(/[-_]/g, '') === catParamClean ||
-              c.name.toLowerCase().replace(/[-_]/g, ' ') === catParamClean
-          )
-        ) {
-          return true;
-        }
-        if (
-          p.categorySlugs &&
-          p.categorySlugs.some(
-            (s) =>
-              s.toLowerCase() === catParam ||
-              s.toLowerCase().replace(/[-_]/g, '') === catParamClean
-          )
-        ) {
-          return true;
-        }
-        return false;
-      });
+      if (catParam === 'new-arrivals' || catParam === 'new-arrival' || catParamClean === 'newarrivals') {
+        result = result.filter((p) => p.isNew);
+      } else if (catParam === 'combos' || catParam === 'combo') {
+        result = result.filter((p) => p.isCombo);
+      } else if (catParam === 'rental' || catParam === 'rent') {
+        result = result.filter(
+          (p) =>
+            p.isRentalAvailable ||
+            p.categorySlug?.toLowerCase().includes('rental') ||
+            p.categorySlugs?.some((s) => s.toLowerCase().includes('rental') || s.toLowerCase() === 'rent') ||
+            p.categories?.some(
+              (c) =>
+                c.slug.toLowerCase().includes('rental') ||
+                c.name.toLowerCase().includes('rental') ||
+                c.slug.toLowerCase() === 'rent'
+            )
+        );
+      } else {
+        const catParamAlpha = catParam.replace(/[^a-z0-9]/g, '');
+        result = result.filter((p) => {
+          if (
+            p.categorySlug.toLowerCase() === catParam ||
+            p.category.toLowerCase() === catParam ||
+            p.categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha ||
+            p.category.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha
+          ) {
+            return true;
+          }
+          if (
+            p.categories &&
+            p.categories.some(
+              (c) =>
+                c.slug.toLowerCase() === catParam ||
+                c.name.toLowerCase() === catParam ||
+                c.slug.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha ||
+                c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha
+            )
+          ) {
+            return true;
+          }
+          if (
+            p.categorySlugs &&
+            p.categorySlugs.some(
+              (s) =>
+                s.toLowerCase() === catParam ||
+                s.toLowerCase().replace(/[^a-z0-9]/g, '') === catParamAlpha
+            )
+          ) {
+            return true;
+          }
+          return false;
+        });
+      }
     }
 
-    
+    if (params?.newArrivalsOnly) {
+      result = result.filter((p) => p.isNew);
+    }
 
     if (params?.type && params.type !== 'all') {
       result = result.filter((p) => p.jewelleryType === params.type);
@@ -346,31 +444,73 @@ export class WooCommerceService {
   // Get Rental Products
   static async getRentalProducts(): Promise<Product[]> {
     const products = await this.getProducts();
-    return products.filter((p) => p.isRentalAvailable);
+    let rentals = products.filter(
+      (p) =>
+        p.isRentalAvailable ||
+        p.categorySlug?.toLowerCase().includes('rental') ||
+        p.categorySlugs?.some((s) => s.toLowerCase().includes('rental') || s.toLowerCase() === 'rent') ||
+        p.categories?.some(
+          (c) =>
+            c.slug.toLowerCase().includes('rental') ||
+            c.name.toLowerCase().includes('rental') ||
+            c.slug.toLowerCase() === 'rent'
+        )
+    );
+    if (rentals.length === 0) {
+      rentals = products
+        .filter((p) => p.price >= 6000)
+        .slice(0, 8)
+        .map((p) => ({ ...p, isRentalAvailable: true }));
+    }
+    return rentals;
   }
 
   // Get Combo Offers
-  static async getComboProducts(): Promise<Product[]> {
-    const products = await this.getProducts();
-    return products.filter((p) => p.isCombo || p.price > 10000);
-  }
+  static async getComboProducts(params?: { category?: string }): Promise<Product[]> {
+    const products = await this.getProducts({ combosOnly: true });
+    let comboProducts = products.filter((p) => p.isCombo);
 
-  // Get New Arrival Products (strictly filtered by WooCommerce 'New Arrivals' category)
-  static async getNewArrivalProducts(): Promise<Product[]> {
-    const categories = await this.getCategories();
-    const newArrivalCat = categories.find(
-      (c) =>
-        c.slug.toLowerCase() === 'new-arrivals' ||
-        c.slug.toLowerCase() === 'new-arrival' ||
-        c.slug.toLowerCase().replace(/[-_]/g, '') === 'newarrivals' ||
-        c.name.toLowerCase().includes('new arrival')
-    );
-
-    if (!newArrivalCat) {
-      return [];
+    if (comboProducts.length === 0) {
+      comboProducts = products.filter((p) => p.price > 10000);
     }
 
-    return await this.getProducts({ category: newArrivalCat.slug });
+    if (params?.category && params.category !== 'all') {
+      const cat = params.category.toLowerCase().trim();
+      const catClean = cat.replace(/[-_]/g, '');
+      comboProducts = comboProducts.filter(
+        (p) =>
+          p.categorySlug.toLowerCase() === cat ||
+          p.categorySlug.toLowerCase().replace(/[-_]/g, '') === catClean ||
+          p.categorySlugs?.some((s) => s.toLowerCase() === cat || s.toLowerCase().replace(/[-_]/g, '') === catClean) ||
+          p.categories?.some((c) => c.slug.toLowerCase() === cat || c.name.toLowerCase() === cat)
+      );
+    }
+
+    return comboProducts;
+  }
+
+  // Get New Arrival Products (dynamically matching category or tag)
+  static async getNewArrivalProducts(params?: { category?: string }): Promise<Product[]> {
+    const allProducts = await this.getProducts();
+    let products = allProducts.filter((p) => p.isNew);
+
+    if (products.length === 0) {
+      products = [...allProducts].sort((a, b) => b.id - a.id).slice(0, 24);
+    }
+
+    if (params?.category && params.category !== 'all') {
+      const cat = params.category.toLowerCase().trim();
+      const catClean = cat.replace(/[-_]/g, '');
+      products = products.filter(
+        (p) =>
+          p.categorySlug.toLowerCase() === cat ||
+          p.categorySlug.toLowerCase().replace(/[-_]/g, '') === catClean ||
+          p.categorySlugs?.some((s) => s.toLowerCase() === cat || s.toLowerCase().replace(/[-_]/g, '') === catClean) ||
+          p.categories?.some((c) => c.slug.toLowerCase() === cat || c.name.toLowerCase() === cat)
+      );
+    }
+
+    return products;
   }
 
   // Verify Coupon

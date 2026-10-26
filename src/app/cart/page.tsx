@@ -23,7 +23,7 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  const freeShippingThreshold = 1500;
+  const freeShippingThreshold = 2000;
   const progressToFreeShipping = Math.min(100, (subtotal / freeShippingThreshold) * 100);
   const amountNeededForFreeShipping = freeShippingThreshold - subtotal;
 
@@ -91,7 +91,7 @@ export default function CartPage() {
           {subtotal >= freeShippingThreshold ? (
             <p className="flex items-center gap-2 text-gold text-xs sm:text-sm font-bold">
               <Truck className="w-5 h-5 text-gold shrink-0" />
-              🎉 Congratulations! You have unlocked FREE Insured Shipping on orders above ₹1,500!
+              🎉 Congratulations! You have unlocked FREE Insured Shipping on orders above ₹2,000!
             </p>
           ) : (
             <div className="space-y-2">

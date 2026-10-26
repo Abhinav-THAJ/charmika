@@ -39,7 +39,10 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const categories = await WooCommerceService.getCategories();
+  const [categories, combos] = await Promise.all([
+    WooCommerceService.getCategories(),
+    WooCommerceService.getComboProducts(),
+  ]);
   return (
     <html lang="en">
       <body className="antialiased selection:bg-gold selection:text-maroon">
@@ -50,7 +53,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <QuickViewProvider>
                   <div className="flex flex-col min-h-screen bg-beige">
                     <TopBanner />
-                    <Navbar categories={categories} />
+                    <Navbar categories={categories} combos={combos} />
                     <main className="flex-1">{children}</main>
                     <Footer categories={categories} />
 

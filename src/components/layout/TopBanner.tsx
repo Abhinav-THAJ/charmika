@@ -16,7 +16,7 @@ export const TopBanner: React.FC = () => {
           <span className="hidden sm:inline text-white/40">|</span>
           <span className="hidden sm:flex items-center gap-1 text-white/90">
             <Truck className="w-3.5 h-3.5 text-gold" />
-            Free Shipping On Orders Above ₹1,500
+            Free Shipping On Orders Above ₹2,000 | Flat ₹80 Shipping
           </span>
         </div>
 

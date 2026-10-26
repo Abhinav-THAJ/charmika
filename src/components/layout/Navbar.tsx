@@ -11,7 +11,7 @@ import {
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { useAuth } from '@/context/AuthContext';
-import { Category } from '@/types';
+import { Category, Product } from '@/types';
 import { SearchOverlay } from '@/components/common/SearchOverlay';
 
 /* ─── Mega Menu Data ──────────────────────────────────────────────── */
@@ -30,7 +30,10 @@ const categoryMenu = [
 
 const megaMenus: Record<string, React.ReactNode> = {};
 
-export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] }) => {
+export const Navbar: React.FC<{ categories?: Category[]; combos?: Product[] }> = ({
+  categories = [],
+  combos = [],
+}) => {
   const pathname = usePathname();
   const { totalItemsCount, setIsCartOpen } = useCart();
   const { wishlistCount } = useWishlist();
@@ -154,48 +157,59 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                 className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-semibold text-maroon hover:text-gold transition-colors px-3 py-2"
                 onFocus={() => openMenu('new')}
               >
-                <Sparkles className="w-3 h-3 text-gold" />
+                <Sparkles className="w-3.5 h-3.5 text-gold" />
                 New Arrivals
                 <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'new' ? 'rotate-180' : ''}`} />
               </Link>
               {activeMenu === 'new' && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
                   onMouseEnter={stayOpen}
                   onMouseLeave={closeMenu}
                 >
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">✨ Fresh Additions</p>
-                      <Link href="/new-arrivals" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold uppercase tracking-wider">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest text-gold font-bold">✨ Real New Arrivals</p>
+                        <p className="text-xs text-charcoal/70 mt-0.5">Explore freshly uploaded designs by category</p>
+                      </div>
+                      <Link
+                        href="/new-arrivals"
+                        onClick={() => setActiveMenu(null)}
+                        className="text-[11px] text-maroon font-bold hover:text-gold uppercase tracking-wider"
+                      >
                         View All →
                       </Link>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {[
-                        { href: '/shop?category=necklace', label: 'New Necklaces', badge: 'Just In', color: 'bg-maroon text-white' },
-                        { href: '/shop?category=earrings', label: 'New Earrings', badge: 'Trending', color: 'bg-gold text-maroon' },
-                        { href: '/shop?category=traditional-long-haramas', label: 'Temple Collection', badge: 'New', color: 'bg-maroon text-white' },
-                        { href: '/shop?category=anti-tarnish-jewellery', label: 'Anti Tarnish Series', badge: 'Popular', color: 'bg-gold text-maroon' },
-                        { href: '/shop?category=bangles', label: 'New Bangles', badge: 'New', color: 'bg-maroon text-white' },
-                        { href: '/new-arrivals', label: 'All New Arrivals', badge: '🌟', color: 'bg-beige text-maroon' },
-                      ].map(({ href, label, badge, color }) => (
+                    <div className="grid grid-cols-2 gap-2">
+                      {categories.filter(c => c.slug !== 'uncategorized' && c.count > 0).map((cat) => (
                         <Link
-                          key={href}
-                          href={href}
+                          key={cat.id}
+                          href={`/new-arrivals?category=${cat.slug}`}
                           onClick={() => setActiveMenu(null)}
-                          className="flex items-center justify-between p-3 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/item"
+                          className="flex items-center justify-between p-2.5 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/item"
                         >
-                          <span className="text-xs font-medium text-charcoal group-hover/item:text-maroon">{label}</span>
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${color}`}>{badge}</span>
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="text-sm">💎</span>
+                            <span className="text-xs font-semibold text-charcoal group-hover/item:text-maroon truncate">
+                              {cat.name}
+                            </span>
+                          </div>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-gold/15 text-maroon shrink-0">
+                            {cat.count}
+                          </span>
                         </Link>
                       ))}
                     </div>
                   </div>
                   <div className="bg-maroon/5 border-t border-gold/20 px-5 py-3 flex items-center justify-between">
-                    <p className="text-[10px] text-charcoal/60">Handcrafted in Kottayam, Kerala</p>
-                    <Link href="/new-arrivals" onClick={() => setActiveMenu(null)} className="text-[10px] font-bold text-maroon hover:text-gold transition-colors">
-                      Shop New Arrivals →
+                    <p className="text-[10px] text-charcoal/60">Curated & Handcrafted in Kottayam, Kerala</p>
+                    <Link
+                      href="/new-arrivals"
+                      onClick={() => setActiveMenu(null)}
+                      className="text-[11px] font-bold text-maroon hover:text-gold transition-colors"
+                    >
+                      Browse All New Arrivals →
                     </Link>
                   </div>
                 </div>
@@ -208,7 +222,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               onMouseEnter={() => openMenu('categories')}
               onMouseLeave={closeMenu}
             >
-              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium text-charcoal hover:text-maroon transition-colors px-3 py-2">
+              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-semibold text-charcoal hover:text-maroon transition-colors px-3 py-2">
                 Categories
                 <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'categories' ? 'rotate-180' : ''}`} />
               </button>
@@ -237,7 +251,7 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                         ))}
                       </div>
                       <div className="mt-3 pt-3 border-t border-gold/20 flex justify-between items-center">
-                        <span className="text-[10px] text-charcoal/50">10 categories · 200+ products</span>
+                        <span className="text-[10px] text-charcoal/50">Curated collections</span>
                         <Link href="/shop" onClick={() => setActiveMenu(null)} className="text-[11px] text-maroon font-bold hover:text-gold uppercase tracking-wider transition-colors">
                           View All Products →
                         </Link>
@@ -247,9 +261,9 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                     <div className="bg-gradient-to-b from-maroon to-maroon-950 p-5 flex flex-col gap-4">
                       <p className="text-[10px] uppercase tracking-widest text-gold font-bold">Spotlight</p>
                       {[
-                        { href: '/shop?category=temple-jewellery', label: 'Temple Collection', sub: 'Traditional & Divine' },
+                        { href: '/shop?category=traditional-long-haramas', label: 'Long Haram', sub: 'Traditional & Divine' },
                         { href: '/shop?category=anti-tarnish-jewellery', label: 'Daily Wear', sub: 'Anti-Tarnish Series' },
-                        { href: '/shop?category=ad-stone-jewellery', label: 'AD Stone', sub: 'Premium Zirconia' },
+                        { href: '/shop?category=ad-jewellery', label: 'AD Stone', sub: 'Premium Sparkle' },
                       ].map(({ href, label, sub }) => (
                         <Link
                           key={href}
@@ -273,11 +287,14 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               onMouseEnter={() => openMenu('rental')}
               onMouseLeave={closeMenu}
             >
-              <button className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-maroon hover:text-gold transition-colors bg-gold/10 px-3 py-1.5 rounded-full border border-gold/30">
-                <Clock className="w-3 h-3 text-gold" />
+              <Link
+                href="/rental"
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-charcoal hover:text-maroon transition-colors px-3 py-2"
+              >
+                <Clock className="w-3.5 h-3.5 text-gold" />
                 Rental Jewellery
                 <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'rental' ? 'rotate-180' : ''}`} />
-              </button>
+              </Link>
               {activeMenu === 'rental' && (
                 <div
                   className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[340px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
@@ -320,50 +337,84 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
               onMouseEnter={() => openMenu('combo')}
               onMouseLeave={closeMenu}
             >
-              <button className="flex items-center gap-1 text-[11px] uppercase tracking-wider font-medium text-charcoal hover:text-maroon transition-colors px-3 py-2">
+              <Link
+                href="/combos"
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-charcoal hover:text-maroon transition-colors px-3 py-2"
+              >
+                <Gift className="w-3.5 h-3.5 text-gold" />
                 Combo Collection
                 <ChevronDown className={`w-3 h-3 text-gold transition-transform ${activeMenu === 'combo' ? 'rotate-180' : ''}`} />
-              </button>
+              </Link>
               {activeMenu === 'combo' && (
                 <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[480px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] bg-white rounded-2xl shadow-2xl border border-gold/20 z-50 overflow-hidden"
                   onMouseEnter={stayOpen}
                   onMouseLeave={closeMenu}
                 >
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-[10px] uppercase tracking-widest text-gold font-bold">🎁 Value Combo Sets</p>
-                      <Link href="/combos" onClick={() => setActiveMenu(null)} className="text-[10px] text-maroon font-bold hover:text-gold">
-                        See All →
+                      <div>
+                        <p className="text-[10px] uppercase tracking-widest text-gold font-bold">🎁 Verified Combo Sets</p>
+                        <p className="text-xs text-charcoal/70 mt-0.5">Real matching jewellery sets from our workshop</p>
+                      </div>
+                      <Link
+                        href="/combos"
+                        onClick={() => setActiveMenu(null)}
+                        className="text-[11px] text-maroon font-bold hover:text-gold uppercase tracking-wider"
+                      >
+                        All Combos ({combos.length}) →
                       </Link>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { href: '/combos?type=bridal', label: '👰 Bridal Combo', desc: 'Complete bridal set', tag: 'Best Value' },
-                        { href: '/combos?type=party', label: '🎉 Party Set', desc: 'Necklace + Earrings', tag: 'Popular' },
-                        { href: '/combos?type=temple', label: '🛕 Temple Set', desc: 'Traditional full set', tag: 'Heritage' },
-                        { href: '/combos?type=daily', label: '☀️ Daily Wear Set', desc: 'Anti-tarnish 3-piece', tag: 'Everyday' },
-                        { href: '/combos?type=gifting', label: '🎀 Gift Combos', desc: 'Ready-to-gift packaging', tag: 'Gifting' },
-                        { href: '/combos', label: '✨ All Combos', desc: 'Browse every set', tag: 'View All' },
-                      ].map(({ href, label, desc, tag }) => (
-                        <Link
-                          key={href}
-                          href={href}
-                          onClick={() => setActiveMenu(null)}
-                          className="flex flex-col gap-1 p-3 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/c"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-maroon group-hover/c:text-gold transition-colors">{label}</span>
-                            <span className="text-[9px] bg-maroon/10 text-maroon px-1.5 py-0.5 rounded-full font-bold">{tag}</span>
-                          </div>
-                          <span className="text-[10px] text-charcoal/50">{desc}</span>
-                        </Link>
-                      ))}
-                    </div>
+
+                    {combos.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {combos.slice(0, 6).map((product) => (
+                          <Link
+                            key={product.id}
+                            href={`/product/${product.slug}`}
+                            onClick={() => setActiveMenu(null)}
+                            className="flex items-center gap-3 p-2.5 rounded-xl border border-gold/15 hover:border-gold/40 hover:bg-gold/5 transition-all group/item"
+                          >
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-gold/20 bg-beige/50">
+                              <Image
+                                src={product.images[0]?.src || '/images/placeholder.jpg'}
+                                alt={product.name}
+                                fill
+                                className="object-cover group-hover/item:scale-105 transition-transform"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-maroon group-hover/item:text-gold truncate">
+                                {product.name}
+                              </p>
+                              <p className="text-[11px] font-bold text-gold-700 mt-0.5">
+                                ₹{product.price > 0 ? product.price.toLocaleString('en-IN') : 'Enquire'}
+                              </p>
+                            </div>
+                            <span className="text-[10px] text-gold font-bold opacity-0 group-hover/item:opacity-100 transition-opacity">
+                              →
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-6 text-center text-xs text-charcoal/60">
+                        <Gift className="w-8 h-8 text-gold mx-auto mb-2 opacity-60" />
+                        Explore our upcoming bridal and festival combo sets
+                      </div>
+                    )}
                   </div>
-                  <div className="bg-gold/10 border-t border-gold/20 px-5 py-3 flex items-center gap-2">
-                    <Gift className="w-4 h-4 text-gold" />
-                    <p className="text-[11px] text-maroon font-semibold">Save more with curated combo sets — Exclusive pricing!</p>
+                  <div className="bg-gold/10 border-t border-gold/20 px-5 py-3 flex items-center justify-between">
+                    <p className="text-[11px] text-maroon font-semibold flex items-center gap-1.5">
+                      <Gift className="w-4 h-4 text-gold" /> Complete sets at special bundled prices!
+                    </p>
+                    <Link
+                      href="/combos"
+                      onClick={() => setActiveMenu(null)}
+                      className="text-[11px] font-bold text-maroon hover:text-gold transition-colors"
+                    >
+                      View All Sets →
+                    </Link>
                   </div>
                 </div>
               )}
@@ -507,12 +558,11 @@ export const Navbar: React.FC<{ categories?: Category[] }> = ({ categories = [] 
                   )}
                 </div>
 
-                <Link href="/rental" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center justify-between text-maroon font-bold">
-                  <span className="flex items-center gap-2"><Clock className="w-4 h-4 text-gold" /> Rental Jewellery</span>
-                  <span className="bg-gold text-white text-[10px] px-2 py-0.5 rounded-full">Popular</span>
+                <Link href="/rental" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                  <Clock className="w-4 h-4 text-gold" /> Rental Jewellery
                 </Link>
-                <Link href="/combos" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2">
-                  🎁 Combo Collection
+                <Link href="/combos" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
+                  <Gift className="w-4 h-4 text-gold" /> Combo Collection
                 </Link>
                 <Link href="/offers" onClick={() => setIsMobileMenuOpen(false)} className="py-3 px-2 border-b border-gold/10 flex items-center gap-2 text-maroon font-semibold">
                   <Zap className="w-4 h-4 text-gold" /> Offers & Festival

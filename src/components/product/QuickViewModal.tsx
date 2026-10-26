@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { X, Star, ShoppingBag, Heart, Clock, ShieldCheck, Check } from 'lucide-react';
+import { X, Heart, ShoppingBag, Clock, ShieldCheck, ArrowRight, Star, MessageCircle } from 'lucide-react';
 import { useQuickView } from '@/context/QuickViewContext';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -16,18 +16,48 @@ export const QuickViewModal: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<'buy' | 'rent'>('buy');
   const [rentalDays, setRentalDays] = useState(3);
 
+  const isRentalProduct = Boolean(
+    quickViewProduct &&
+      (quickViewProduct.isRentalAvailable ||
+        quickViewProduct.categorySlug?.toLowerCase().includes('rental') ||
+        quickViewProduct.categorySlugs?.some((s) => s.toLowerCase().includes('rental') || s.toLowerCase() === 'rent') ||
+        quickViewProduct.categories?.some(
+          (c) => c.slug.toLowerCase().includes('rental') || c.name.toLowerCase().includes('rental') || c.slug.toLowerCase() === 'rent'
+        ))
+  );
+
+  useEffect(() => {
+    if (isRentalProduct) {
+      setSelectedMode('rent');
+    } else {
+      setSelectedMode('buy');
+    }
+  }, [isRentalProduct, quickViewProduct]);
+
   if (!quickViewProduct) return null;
 
   const isWishlisted = isInWishlist(quickViewProduct.id);
 
   const handleAddToCart = () => {
-    if (selectedMode === 'rent') {
-      addToCart(quickViewProduct, true, rentalDays);
+    if (isRentalProduct || selectedMode === 'rent') {
+      const text = encodeURIComponent(
+        `Hello CHARMIKA By Lekshmi, I want to rent "${quickViewProduct.name}" (SKU: ${quickViewProduct.sku}) for ${rentalDays} days. Please share availability and rental procedure.`
+      );
+      window.open(`https://wa.me/919400976257?text=${text}`, '_blank');
     } else {
       addToCart(quickViewProduct, false);
     }
     closeQuickView();
   };
+
+  const categoriesList =
+    quickViewProduct.categories && quickViewProduct.categories.length > 0
+      ? quickViewProduct.categories.filter((c) => c.slug !== 'uncategorized')
+      : [{ id: 0, name: quickViewProduct.category, slug: quickViewProduct.categorySlug }];
+
+  const whatsappRentalUrl = `https://wa.me/919400976257?text=${encodeURIComponent(
+    `Hello CHARMIKA By Lekshmi, I want to rent "${quickViewProduct.name}" (SKU: ${quickViewProduct.sku}) for ${rentalDays} days. Please share availability and rental procedure.`
+  )}`;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
@@ -36,6 +66,7 @@ export const QuickViewModal: React.FC = () => {
         <button
           onClick={closeQuickView}
           className="absolute top-4 right-4 z-20 p-2 rounded-full bg-beige hover:bg-gold/20 text-maroon transition-colors"
+          aria-label="Close"
         >
           <X className="w-5 h-5" />
         </button>
@@ -71,38 +102,28 @@ export const QuickViewModal: React.FC = () => {
           {/* Details Column */}
           <div className="p-6 flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 text-xs text-gold font-semibold uppercase tracking-wider mb-1">
-                <span>{quickViewProduct.category}</span>
+              {/* Multi-category tags */}
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {categoriesList.map((c) => (
+                  <span
+                    key={c.slug}
+                    className="text-[10px] font-semibold uppercase tracking-wider text-gold-700 bg-gold/15 px-2.5 py-0.5 rounded-full border border-gold/30"
+                  >
+                    {c.name}
+                  </span>
+                ))}
+                {isRentalProduct && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                    ⏰ Rental Only
+                  </span>
+                )}
               </div>
 
               <h2 className="font-serif text-xl font-bold text-maroon">{quickViewProduct.name}</h2>
 
-
-
-              {/* Pricing Tabs (Buy vs Rent) */}
-              <div className="mt-4 p-3 bg-beige/60 rounded-xl border border-gold/20">
-                <div className="flex rounded-lg bg-white p-1 mb-3 border border-gold/15">
-                  <button
-                    onClick={() => setSelectedMode('buy')}
-                    className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all ${
-                      selectedMode === 'buy' ? 'bg-maroon text-white shadow-xs' : 'text-charcoal/70'
-                    }`}
-                  >
-                    Outright Purchase
-                  </button>
-                  {quickViewProduct.isRentalAvailable && (
-                    <button
-                      onClick={() => setSelectedMode('rent')}
-                      className={`flex-1 py-1.5 text-xs font-bold rounded-md transition-all flex items-center justify-center gap-1 ${
-                        selectedMode === 'rent' ? 'bg-gold text-maroon shadow-xs' : 'text-charcoal/70'
-                      }`}
-                    >
-                      <Clock className="w-3 h-3" /> Rent Jewellery
-                    </button>
-                  )}
-                </div>
-
-                {selectedMode === 'buy' ? (
+              {/* Pricing Section */}
+              <div className="mt-4 p-4 bg-beige/60 rounded-xl border border-gold/20">
+                {!isRentalProduct ? (
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="font-serif font-bold text-2xl text-maroon">
@@ -126,64 +147,65 @@ export const QuickViewModal: React.FC = () => {
                   </div>
                 ) : (
                   <div>
-                    <div className="flex items-baseline justify-between">
-                      <span className="font-serif font-bold text-xl text-maroon">
-                        ₹{((quickViewProduct.rentalPricePerDay || 500) * rentalDays).toLocaleString('en-IN')}
-                      </span>
-                      <span className="text-xs text-charcoal/70 font-medium">
-                        (₹{quickViewProduct.rentalPricePerDay}/day)
+                    <div className="flex items-baseline justify-between mb-2">
+                      <div>
+                        <span className="text-[10px] font-bold text-charcoal/60 uppercase tracking-wider block">
+                          Rental Fee ({rentalDays} Days)
+                        </span>
+                        <span className="font-serif font-bold text-2xl text-maroon">
+                          ₹{((quickViewProduct.rentalPricePerDay || 500) * rentalDays).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                      <span className="text-xs text-amber-800 font-bold bg-amber-100 px-2 py-1 rounded">
+                        ₹{quickViewProduct.rentalPricePerDay || 500}/day
                       </span>
                     </div>
 
                     {/* Rental Duration Options */}
-                    <div className="mt-2.5">
-                      <span className="text-[11px] text-charcoal/70 font-medium block mb-1">
+                    <div className="mt-2.5 pt-2 border-t border-gold/20">
+                      <span className="text-[11px] text-charcoal/80 font-semibold block mb-1">
                         Select Rental Duration:
                       </span>
                       <div className="flex gap-2">
-                        {[3, 5, 7].map((days) => (
+                        {[1, 2, 3, 5, 7].map((days) => (
                           <button
                             key={days}
                             onClick={() => setRentalDays(days)}
                             className={`px-3 py-1 rounded text-xs font-semibold border transition-all ${
                               rentalDays === days
                                 ? 'bg-maroon text-white border-maroon'
-                                : 'bg-white text-charcoal border-gold/30'
+                                : 'bg-white text-charcoal border-gold/30 hover:border-gold'
                             }`}
                           >
-                            {days} Days
+                            {days} {days === 1 ? 'Day' : 'Days'}
                           </button>
                         ))}
                       </div>
-                      <p className="text-[10px] text-charcoal/60 mt-1.5">
-                        Refundable Security Deposit: ₹{(quickViewProduct.securityDeposit || 2000).toLocaleString('en-IN')}
+                      <p className="text-[10px] text-charcoal/70 mt-2 bg-gold/10 p-2 rounded border border-gold/20">
+                        🛡️ Refundable Security Deposit: ₹{(quickViewProduct.securityDeposit || 2000).toLocaleString('en-IN')}. Rental items are booked via WhatsApp.
                       </p>
                     </div>
                   </div>
                 )}
               </div>
-
-
             </div>
 
             {/* Bottom Actions */}
             <div className="mt-6 pt-4 border-t border-gold/20 flex gap-3">
-              {selectedMode === 'rent' ? (
+              {isRentalProduct ? (
                 <a
-                  href={`https://wa.me/919400976257?text=${encodeURIComponent(
-                    `Hello CHARMIKA By Lekshmi, I want to rent "${quickViewProduct.name}" for ${rentalDays} days. Please share booking availability.`
-                  )}`}
+                  href={whatsappRentalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md text-center"
+                  className="flex-1 py-3 bg-emerald-700 text-white font-bold text-xs rounded-full hover:bg-emerald-600 transition-all flex items-center justify-center gap-2 shadow-md text-center uppercase tracking-wider"
                 >
-                  <Clock className="w-4 h-4" />
-                  Rent Now on WhatsApp ({rentalDays} Days)
+                  <MessageCircle className="w-4 h-4" />
+                  Rent on WhatsApp ({rentalDays} Days)
                 </a>
               ) : (
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md"
+                  className="flex-1 py-3 bg-maroon text-white font-bold text-xs rounded-full hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-2 shadow-md uppercase tracking-wider"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Add to Shopping Cart
@@ -199,16 +221,6 @@ export const QuickViewModal: React.FC = () => {
               >
                 <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-gold' : ''}`} />
               </button>
-            </div>
-
-            <div className="mt-3 text-center">
-              <Link
-                href={`/product/${quickViewProduct.slug}`}
-                onClick={closeQuickView}
-                className="text-xs font-semibold text-gold hover:text-maroon underline"
-              >
-                View Full Product Details & Specifications →
-              </Link>
             </div>
           </div>
         </div>

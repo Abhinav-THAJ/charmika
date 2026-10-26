@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Heart, Eye, Star, Sparkles, ShoppingBag, Clock } from 'lucide-react';
+import { Heart, Eye, Star, Sparkles, ShoppingBag, Clock, MessageCircle } from 'lucide-react';
 import { Product } from '@/types';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -18,15 +18,19 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
   const { openQuickView } = useQuickView();
   const isWishlisted = isInWishlist(product.id);
 
-  const rentalPrice = product.rentalPricePerDay ?? Math.round(product.price * 0.05);
-  const deposit = product.securityDeposit ?? Math.round(product.price * 0.3);
+  const rentalPrice = product.rentalPricePerDay || Math.round(product.price * 0.05) || 500;
+  const deposit = product.securityDeposit || Math.round(product.price * 0.3) || 1500;
+
+  const whatsappRentalUrl = `https://wa.me/919400976257?text=${encodeURIComponent(
+    `Hello Charmika By Lekshmi, I would like to book "${product.name}" for rental (₹${rentalPrice}/day). Please share available dates and rental details.`
+  )}`;
 
   return (
     <div className="group relative bg-white rounded-xl overflow-hidden border border-gold/15 shadow-xs hover:shadow-luxury transition-all duration-300 flex flex-col">
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-beige/40">
         <img
-          src={product.images[0].src}
+          src={product.images[0]?.src || '/placeholder.png'}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -39,12 +43,7 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
             </span>
           ) : (
             <span className="bg-emerald-700 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> In Stock
-            </span>
-          )}
-          {product.onSale && (
-            <span className="bg-maroon text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-xs uppercase tracking-wider">
-              Sale
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Available for Rent
             </span>
           )}
           {product.isNew && (
@@ -78,17 +77,17 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
           </button>
         </div>
 
-        {/* Hover slide-up: Rent Now */}
+        {/* Hover slide-up: Rent on WhatsApp */}
         <div className="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/70 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10">
           <a
-            href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
+            href={whatsappRentalUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="w-full py-2 bg-gold text-maroon text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md hover:bg-white text-center"
+            className="w-full py-2 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-md text-center uppercase tracking-wider"
           >
-            <Clock className="w-3.5 h-3.5" />
-            Rent Now — ₹{rentalPrice}/day
+            <MessageCircle className="w-3.5 h-3.5" />
+            Rent on WhatsApp
           </a>
         </div>
       </div>
@@ -96,7 +95,23 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
       {/* Info */}
       <div className="p-4 flex-1 flex flex-col justify-between bg-white">
         <div>
-
+          {/* Multi-Category Tags */}
+          <div className="flex flex-wrap gap-1 mb-1.5">
+            {(product.categories && product.categories.length > 0
+              ? product.categories
+              : [{ id: 0, name: product.category, slug: product.categorySlug }]
+            )
+              .filter((c) => c.slug !== 'uncategorized')
+              .slice(0, 3)
+              .map((c) => (
+                <span
+                  key={c.slug}
+                  className="text-[9px] font-semibold text-gold-700 bg-gold/10 px-1.5 py-0.5 rounded border border-gold/20"
+                >
+                  {c.name}
+                </span>
+              ))}
+          </div>
 
           <Link href={`/product/${product.slug}`} className="before:absolute before:inset-0 before:z-[5]" aria-label={`View ${product.name}`}>
             <h3 className="font-serif text-sm font-semibold text-maroon hover:text-gold transition-colors line-clamp-1">
@@ -119,32 +134,30 @@ export const RentalProductCard: React.FC<RentalProductCardProps> = ({ product })
         </div>
 
         <div className="mt-3 pt-3 border-t border-gold/10">
-          {/* Purchase price row */}
+          {/* Rental Fee info (Online buying disabled) */}
           <div className="flex items-baseline justify-between mb-2.5">
             <div className="flex items-baseline gap-1.5">
-              <span className="font-serif font-bold text-sm text-maroon">
-                ₹{product.price.toLocaleString('en-IN')}
+              <span className="font-serif font-bold text-base text-maroon">
+                ₹{rentalPrice.toLocaleString('en-IN')}
               </span>
-              {product.regularPrice > product.price && (
-                <span className="text-xs text-charcoal/40 line-through">
-                  ₹{product.regularPrice.toLocaleString('en-IN')}
-                </span>
-              )}
-              <span className="text-[9px] text-charcoal/40">to buy</span>
+              <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider">
+                / day rent
+              </span>
             </div>
+            <span className="text-[10px] text-charcoal/50">WhatsApp Booking</span>
           </div>
 
-          {/* Action button - Rent Now */}
+          {/* Action button - Rent on WhatsApp */}
           <div className="relative z-10">
             <a
-              href={`https://wa.me/919400976257?text=${encodeURIComponent(`Hello Charmika By Lekshmi, I would like to rent "${product.name}" (₹${rentalPrice}/day). Please share available dates and booking details.`)}`}
+              href={whatsappRentalUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="w-full py-2.5 bg-maroon hover:bg-gold hover:text-maroon text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 text-center shadow-xs"
+              className="w-full py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 text-center shadow-xs tracking-wider uppercase"
             >
-              <Clock className="w-4 h-4" />
-              Rent Now — ₹{rentalPrice}/day
+              <MessageCircle className="w-3.5 h-3.5" />
+              Rent on WhatsApp
             </a>
           </div>
         </div>

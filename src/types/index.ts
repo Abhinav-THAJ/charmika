@@ -49,6 +49,8 @@ export interface Product {
   categorySlug: string;
   categories?: ProductCategory[];
   categorySlugs?: string[];
+  tags?: string[];
+  tagSlugs?: string[];
   subCategory?: string;
   jewelleryType: 'Gold Plated' | 'Temple Jewellery' | 'AD Stone' | 'Anti Tarnish' | 'Kundan' | 'Silver Finish';
   shortDescription: string;

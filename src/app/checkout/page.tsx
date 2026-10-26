@@ -52,6 +52,7 @@ export default function CheckoutPage() {
           payment_method: 'payu',
           payment_method_title: 'PayU Secure Checkout',
           status: 'pending',
+          shipping_total: shippingAmount,
           customer_note: `Charmika Online Order - Phone: ${formData.phone}`,
         }),
       });

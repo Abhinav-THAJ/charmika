@@ -61,7 +61,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     startDate?: string,
     endDate?: string
   ) => {
-    const cartItemId = isRental ? `${product.id}-rental-${startDate || 'default'}` : `${product.id}-buy`;
+    const isRentalProduct = Boolean(
+      isRental ||
+        product.isRentalAvailable ||
+        product.categorySlug?.toLowerCase().includes('rental') ||
+        product.categorySlugs?.some((s) => s.toLowerCase().includes('rental') || s.toLowerCase() === 'rent') ||
+        product.categories?.some(
+          (c) =>
+            c.slug.toLowerCase().includes('rental') ||
+            c.name.toLowerCase().includes('rental') ||
+            c.slug.toLowerCase() === 'rent'
+        )
+    );
+
+    if (isRentalProduct) {
+      addToast(`Rental items cannot be purchased online. Opening WhatsApp to book "${product.name}"...`, 'info');
+      const text = encodeURIComponent(
+        `Hello Charmika By Lekshmi, I would like to book "${product.name}" for rental (${rentalDays} Days). Please let me know the availability.`
+      );
+      if (typeof window !== 'undefined') {
+        window.open(`https://wa.me/919400976257?text=${text}`, '_blank');
+      }
+      return;
+    }
+
+    const cartItemId = `${product.id}-buy`;
 
     setCart((prevCart) => {
       const existing = prevCart.find((item) => item.id === cartItemId);
@@ -151,7 +175,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     : 0;
 
   const taxAmount = 0; // Inclusive for luxury jewellery
-  const shippingAmount = subtotal >= 1500 || subtotal === 0 ? 0 : 250;
+  const FREE_SHIPPING_THRESHOLD = 2000;
+  const STANDARD_SHIPPING_RATE = 80;
+  const shippingAmount = subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : STANDARD_SHIPPING_RATE;
   const totalAmount = Math.max(0, subtotal - discountAmount + shippingAmount);
   const totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 

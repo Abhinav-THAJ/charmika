@@ -7,6 +7,7 @@ export async function POST(request: Request) {
       billing,
       shipping,
       line_items,
+      shipping_total,
       payment_method = 'payu',
       payment_method_title = 'PayU Secure Checkout',
       status = 'pending',
@@ -68,6 +69,13 @@ export async function POST(request: Request) {
         };
       }),
       customer_note: customer_note || undefined,
+      shipping_lines: [
+        {
+          method_id: shipping_total && Number(shipping_total) > 0 ? 'flat_rate' : 'free_shipping',
+          method_title: shipping_total && Number(shipping_total) > 0 ? 'Standard Shipping' : 'Free Shipping (Orders above ₹2,000)',
+          total: String(shipping_total ?? (0))
+        }
+      ],
       meta_data: [
         { key: '_created_via', value: 'Charmika Next.js Web Store' },
         { key: '_shipping_carrier', value: 'Shiprocket' },

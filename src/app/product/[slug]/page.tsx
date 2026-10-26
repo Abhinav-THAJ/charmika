@@ -23,7 +23,8 @@ import {
   MessageSquare,
   Zap,
   Sparkles,
-  Gem
+  Gem,
+  MessageCircle,
 } from 'lucide-react';
 
 export default function ProductDetailPage() {
@@ -41,6 +42,22 @@ export default function ProductDetailPage() {
 
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const isRental = Boolean(
+    product &&
+      (product.isRentalAvailable ||
+        product.categorySlug?.toLowerCase().includes('rental') ||
+        product.categorySlugs?.some((s) => s.toLowerCase().includes('rental') || s.toLowerCase() === 'rent') ||
+        product.categories?.some(
+          (c) => c.slug.toLowerCase().includes('rental') || c.name.toLowerCase().includes('rental') || c.slug.toLowerCase() === 'rent'
+        ))
+  );
+
+  useEffect(() => {
+    if (isRental) {
+      setSelectedMode('rent');
+    }
+  }, [isRental]);
 
   useEffect(() => {
     async function loadProduct() {
@@ -158,14 +175,46 @@ export default function ProductDetailPage() {
           <div className="flex flex-col justify-between space-y-8">
             <div>
               {/* Badges & SKU */}
-              <div className="flex items-center justify-between text-xs font-semibold mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 bg-gold/10 text-gold rounded-full border border-gold/20 uppercase tracking-widest text-[10px]">
-                    {product.category}
-                  </span>
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold mb-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  {product.categories && product.categories.length > 0 ? (
+                    product.categories
+                      .filter((c) => c.slug !== 'uncategorized')
+                      .map((cat) => (
+                        <Link
+                          key={cat.id || cat.slug}
+                          href={
+                            cat.slug.toLowerCase().includes('rental') || cat.slug.toLowerCase() === 'rent'
+                              ? '/rental'
+                              : `/shop?category=${cat.slug}`
+                          }
+                          className={`px-3 py-1 rounded-full uppercase tracking-widest text-[10px] font-bold border transition-colors ${
+                            cat.slug.toLowerCase().includes('rental') || cat.slug.toLowerCase() === 'rent'
+                              ? 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
+                              : 'bg-gold/10 text-gold border-gold/25 hover:bg-gold/20'
+                          }`}
+                        >
+                          {cat.name}
+                        </Link>
+                      ))
+                  ) : (
+                    <span className="px-3 py-1 bg-gold/10 text-gold rounded-full border border-gold/20 uppercase tracking-widest text-[10px]">
+                      {product.category}
+                    </span>
+                  )}
+                  {isRental && (
+                    <span className="px-3 py-1 bg-amber-600/15 text-amber-800 rounded-full border border-amber-600/30 uppercase tracking-widest text-[10px] font-bold flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> Exclusive Rental
+                    </span>
+                  )}
                   {product.isNew && (
                     <span className="px-3 py-1 bg-maroon/10 text-maroon rounded-full border border-maroon/20 uppercase tracking-widest text-[10px] flex items-center gap-1">
                       <Sparkles className="w-3 h-3" /> New Arrival
+                    </span>
+                  )}
+                  {product.isCombo && (
+                    <span className="px-3 py-1 bg-rose-700/10 text-rose-800 rounded-full border border-rose-700/20 uppercase tracking-widest text-[10px] flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> Combo Set
                     </span>
                   )}
                 </div>
@@ -194,8 +243,8 @@ export default function ProductDetailPage() {
                 </p>
               )}
 
-              {/* Purchase / Rental Mode Toggle */}
-              {product.isRentalAvailable && (
+              {/* Purchase / Rental Mode Toggle: only if NOT rental-only */}
+              {!isRental && product.isRentalAvailable && (
                 <div className="mt-8 p-1 bg-beige rounded-xl inline-flex border border-gold/20 shadow-inner">
                   <button
                     onClick={() => setSelectedMode('buy')}
@@ -223,7 +272,31 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="relative z-10">
-                  {selectedMode === 'buy' ? (
+                  {isRental ? (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold text-amber-800 uppercase tracking-widest bg-amber-100 px-2.5 py-1 rounded-md border border-amber-200">
+                          Rental Fee ({rentalDays} Days)
+                        </span>
+                        <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
+                          ₹{(product.rentalPricePerDay || product.price || 500).toLocaleString('en-IN')}/day
+                        </span>
+                      </div>
+                      <div className="flex items-baseline gap-3">
+                        <span className="font-serif font-bold text-4xl sm:text-5xl text-maroon">
+                          ₹{((product.rentalPricePerDay || product.price || 500) * rentalDays).toLocaleString('en-IN')}
+                        </span>
+                        <span className="text-sm text-charcoal/60 font-medium">for {rentalDays} days rental</span>
+                      </div>
+                      <div className="mt-4 flex items-center gap-2 text-xs text-charcoal/70 bg-gold/10 px-4 py-2.5 rounded-xl inline-flex border border-gold/20">
+                         <ShieldCheck className="w-4 h-4 text-gold shrink-0" />
+                         Refundable Security Deposit: <strong className="text-maroon">₹{(product.securityDeposit || Math.round((product.price || 5000) * 0.3)).toLocaleString('en-IN')}</strong>
+                      </div>
+                      <p className="mt-3 text-[11px] text-amber-800 bg-amber-50/80 p-3 rounded-xl border border-amber-200/70 font-medium leading-relaxed">
+                        ✦ <strong>Rental Exclusive:</strong> Online cart and direct purchase are disabled for rental designs. Contact our bridal concierge on WhatsApp to verify date availability and confirm booking.
+                      </p>
+                    </div>
+                  ) : (
                     <div>
                       <div className="text-[10px] font-bold text-charcoal/50 uppercase tracking-widest mb-1.5">Purchase Price</div>
                       <div className="flex items-baseline gap-4">
@@ -242,20 +315,6 @@ export default function ProductDetailPage() {
                         </div>
                       )}
                     </div>
-                  ) : (
-                    <div>
-                      <div className="text-[10px] font-bold text-charcoal/50 uppercase tracking-widest mb-1.5">Rental Price</div>
-                      <div className="flex items-baseline gap-4">
-                        <span className="font-serif font-bold text-4xl sm:text-5xl text-maroon">
-                          ₹{(product.rentalPricePerDay || Math.round(product.price * 0.05)).toLocaleString('en-IN')}
-                        </span>
-                        <span className="text-sm text-charcoal/60 font-medium">/ day</span>
-                      </div>
-                      <div className="mt-4 flex items-center gap-2 text-xs text-charcoal/70 bg-gold/10 px-4 py-2.5 rounded-xl inline-flex border border-gold/20">
-                         <ShieldCheck className="w-4 h-4 text-gold" />
-                         Refundable Security Deposit: <strong className="text-maroon">₹{(product.securityDeposit || Math.round(product.price * 0.3)).toLocaleString('en-IN')}</strong>
-                      </div>
-                    </div>
                   )}
 
                   {/* Stock Status */}
@@ -266,47 +325,73 @@ export default function ProductDetailPage() {
                       </p>
                     ) : (
                       <p className="text-[11px] text-emerald-700 font-bold uppercase tracking-widest flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" /> In Stock • Ready to Ship
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" /> In Stock • Ready to {isRental ? 'Rent' : 'Ship'}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Quantity / Rental Days (if rent) */}
-              {selectedMode === 'rent' && (
-                <div className="mt-8 flex items-center gap-6">
-                   <div className="text-xs font-bold text-charcoal uppercase tracking-widest">Duration:</div>
-                   <div className="flex items-center border border-gold/30 rounded-xl bg-white overflow-hidden shadow-sm">
-                      <button onClick={() => setRentalDays(Math.max(1, rentalDays - 1))} className="px-5 py-2.5 text-charcoal hover:bg-beige transition-colors font-medium">-</button>
-                      <span className="px-6 py-2.5 font-bold text-maroon border-x border-gold/15 bg-beige/30">{rentalDays} Days</span>
-                      <button onClick={() => setRentalDays(rentalDays + 1)} className="px-5 py-2.5 text-charcoal hover:bg-beige transition-colors font-medium">+</button>
+              {/* Rental Days Selector */}
+              {isRental && (
+                <div className="mt-8 space-y-3">
+                   <div className="text-xs font-bold text-charcoal uppercase tracking-widest">Select Rental Duration:</div>
+                   <div className="flex flex-wrap gap-2">
+                     {[1, 2, 3, 5, 7].map((days) => (
+                       <button
+                         key={days}
+                         onClick={() => setRentalDays(days)}
+                         className={`px-5 py-2.5 rounded-xl text-xs font-bold border transition-all ${
+                           rentalDays === days
+                             ? 'bg-maroon text-white border-maroon shadow-sm'
+                             : 'bg-white text-charcoal border-gold/30 hover:border-gold hover:bg-beige/50'
+                         }`}
+                       >
+                         {days} {days === 1 ? 'Day' : 'Days'}
+                       </button>
+                     ))}
                    </div>
                 </div>
               )}
             </div>
 
-            {/* Action Buttons */}
+            {/* Action Buttons: Never allow buying rental products! */}
             <div className="space-y-4 pt-6">
-              <button
-                onClick={handleAddToCart}
-                disabled={product.stockStatus === 'outofstock'}
-                className="w-full py-4 bg-maroon text-white font-bold text-xs sm:text-sm uppercase tracking-widest rounded-xl hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-3 shadow-luxury disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                <ShoppingBag className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">{selectedMode === 'rent' ? `Book Rental for ${rentalDays} Days` : 'Add to Shopping Cart'}</span>
-              </button>
+              {isRental ? (
+                <a
+                  href={`https://wa.me/919400976257?text=${encodeURIComponent(
+                    `Hello Charmika By Lekshmi, I would like to book "${product.name}" for rental (${rentalDays} Days).\n\nProduct Link: ${typeof window !== 'undefined' ? window.location.href : ''}\nPlease let me know the availability and rental booking procedure.`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-3 shadow-luxury"
+                >
+                  <MessageCircle className="w-5 h-5 fill-white text-emerald-700" />
+                  <span>Book Rental on WhatsApp ({rentalDays} Days)</span>
+                </a>
+              ) : (
+                <>
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={product.stockStatus === 'outofstock'}
+                    className="w-full py-4 bg-maroon text-white font-bold text-xs sm:text-sm uppercase tracking-widest rounded-xl hover:bg-gold hover:text-maroon transition-all flex items-center justify-center gap-3 shadow-luxury disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    <ShoppingBag className="w-5 h-5 relative z-10" />
+                    <span className="relative z-10">Add to Shopping Cart</span>
+                  </button>
 
-              <button
-                onClick={handleBuyNow}
-                disabled={product.stockStatus === 'outofstock'}
-                className="w-full py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-3 shadow-md disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-black/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                <Zap className="w-5 h-5 fill-white relative z-10" /> 
-                <span className="relative z-10">Buy It Now</span>
-              </button>
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={product.stockStatus === 'outofstock'}
+                    className="w-full py-4 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-3 shadow-md disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-black/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                    <Zap className="w-5 h-5 fill-white relative z-10" /> 
+                    <span className="relative z-10">Buy It Now</span>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Trust Badges */}
@@ -419,7 +504,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="mt-6 flex items-center gap-3 text-sm bg-maroon/5 p-4 rounded-xl border-l-4 border-maroon">
                   <Sparkles className="w-5 h-5 text-maroon shrink-0" />
-                  <p><strong className="text-maroon">Free shipping</strong> is automatically applied at checkout to all orders above ₹1,500.</p>
+                  <p><strong className="text-maroon">Free shipping</strong> is automatically applied at checkout to all orders above ₹2,000 (Flat ₹80 shipping below ₹2,000).</p>
                 </div>
               </div>
             )}
